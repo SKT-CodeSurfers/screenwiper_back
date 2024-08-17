@@ -3,3 +3,7 @@
 
 ## 시작 가이드
 screenwipe_back
+
+chmod 400 {pem파일위치}
+
+ssh -i pem파일 ubuntu@{ip}
