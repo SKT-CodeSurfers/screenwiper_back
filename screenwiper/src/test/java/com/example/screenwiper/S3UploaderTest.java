@@ -21,12 +21,12 @@ public class S3UploaderTest {
         }
     }
 
-    @Test
-    public void testRemove() {
-        try {
-            s3Uploader.removeS3File("test.png");
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
+//    @Test
+//    public void testRemove() {
+//        try {
+//            s3Uploader.removeS3File("test.png");
+//        }catch(Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }

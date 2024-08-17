@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### key ###
-screenwiper/src/main/resources/application-private.properties
+.env*
