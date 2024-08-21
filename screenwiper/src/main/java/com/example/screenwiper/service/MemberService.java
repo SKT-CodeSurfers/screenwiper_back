@@ -32,4 +32,17 @@ public class MemberService {
         return member;
     }
 
+    @Transactional
+    public boolean deleteMember(Long memberId) {
+        Member member = memberRepository.findOne(memberId);
+        if (member != null) {
+            memberRepository.delete(member);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
 }

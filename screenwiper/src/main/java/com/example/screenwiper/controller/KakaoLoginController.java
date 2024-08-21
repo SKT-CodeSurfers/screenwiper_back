@@ -9,6 +9,7 @@ import com.example.screenwiper.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,6 +84,20 @@ public class KakaoLoginController {
             return ResponseEntity.status(401).body("Not logged in");
         }
     }
+
+    // 회원 탈퇴 로직
+    @DeleteMapping("/members/{memberId}")
+    public ResponseEntity<String> deleteMember(@PathVariable Long memberId) {
+        log.info("Deleting memberID :"+ memberId);
+        boolean isDeleted = memberService.deleteMember(memberId);
+
+        if (isDeleted) {
+            return ResponseEntity.ok("Member deleted 완료");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
+        }
+    }
+
 }
 
 

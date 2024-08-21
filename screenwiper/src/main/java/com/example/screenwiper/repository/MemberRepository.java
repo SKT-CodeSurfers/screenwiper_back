@@ -38,4 +38,9 @@ public class MemberRepository {
         Member member = em.find(Member.class, userId);
         return Optional.ofNullable(member);
     }
+
+    public void delete(Member member) {
+        em.remove(member);
+    }
+
 }
