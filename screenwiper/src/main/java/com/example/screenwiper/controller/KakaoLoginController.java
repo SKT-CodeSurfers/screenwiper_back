@@ -98,6 +98,25 @@ public class KakaoLoginController {
         }
     }
 
+    @DeleteMapping("/members/me")
+    public ResponseEntity<String> deleteCurrentMember(HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+
+        Long memberId = loginMember.getId();
+        log.info("Deleting memberID :" + memberId);
+        boolean isDeleted = memberService.deleteMember(memberId);
+
+        if (isDeleted) {
+            session.invalidate(); // 세션 무효화 (로그아웃)
+            return ResponseEntity.ok("Member deleted 완료");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
+        }
+    }
+
 }
 
 
