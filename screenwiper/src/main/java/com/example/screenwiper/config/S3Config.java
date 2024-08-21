@@ -23,6 +23,10 @@ public class S3Config {
 
     @Bean
     public AmazonS3 amazonS3() {
+        System.out.println("Access Key: " + accessKey);
+        System.out.println("Secret Key: " + secretKey);
+        System.out.println("Region: " + region);
+
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
         return AmazonS3ClientBuilder
@@ -31,5 +35,4 @@ public class S3Config {
                 .withRegion(region)
                 .build();
     }
-
 }

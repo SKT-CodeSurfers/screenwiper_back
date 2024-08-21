@@ -37,4 +37,6 @@ out/
 .vscode/
 
 ### key ###
+# 민감한 설정 파일 무시
+application-secret.properties
 .env*

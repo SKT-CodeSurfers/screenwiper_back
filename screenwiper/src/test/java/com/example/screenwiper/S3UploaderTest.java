@@ -13,7 +13,7 @@ public class S3UploaderTest {
     @Test
     public void testUpload() {
         try{
-            String filePath ="/Users/song/Downloads/upload/test.png";
+            String filePath ="/Users/jordy/Desktop/test2.png";
             String uploadName = s3Uploader.upload(filePath);
             System.out.println("uploadName = " + uploadName);
         }catch(Exception e){
