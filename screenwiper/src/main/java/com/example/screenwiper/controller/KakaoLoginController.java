@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,38 +47,43 @@ public class KakaoLoginController {
     // 카카오 콜백을 처리하는 API
     @GetMapping("/callback")
     public ResponseEntity<Map<String, String>> callback(@RequestParam("code") String code, HttpSession session) {
-        String accessToken = kakaoService.getAccessTokenFromKakao(code);
-        log.info("AccessToken: " + accessToken);
+        try {
+            log.info("Authorization code: " + code);
 
-        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
-        log.info("User Info: " + userInfo);
+            String accessToken = kakaoService.getAccessTokenFromKakao(code);
+            log.info("AccessToken: " + accessToken);
 
-        Long kakaoId = userInfo.getId();
-        String nickName = userInfo.getKakaoAccount().getProfile().getNickName();
-        String email = userInfo.getKakaoAccount().getEmail();
+            KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
+            log.info("User Info: " + userInfo);
 
-        if (!memberService.isMemberExist(kakaoId)) {
-            // 회원가입 처리
-            Member newMember = new Member();
-            newMember.setId(kakaoId);
-            newMember.setName(nickName);
-            newMember.setEmail(email);
-            memberService.join(newMember);
-            log.info("New member joined: " + newMember.getName());
+            Long kakaoId = userInfo.getId();
+            String nickName = userInfo.getKakaoAccount().getProfile().getNickName();
+            String email = userInfo.getKakaoAccount().getEmail();
+
+            if (!memberService.isMemberExist(kakaoId)) {
+                Member newMember = new Member();
+                newMember.setId(kakaoId);
+                newMember.setName(nickName);
+                newMember.setEmail(email);
+                memberService.join(newMember);
+                log.info("New member joined: " + newMember.getName());
+            }
+
+            Member member = memberService.login(kakaoId);
+            session.setAttribute("loginMember", member);
+            log.info("Member logged in and saved to session: " + member.getName());
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Login successful");
+            response.put("name", member.getName());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to handle Kakao callback", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", "Failed to login with Kakao"));
         }
-
-        // 세션에 로그인 정보 저장
-        Member member = memberService.login(kakaoId);
-        session.setAttribute("loginMember", member);
-        log.info("Member logged in and saved to session: " + member.getName());
-
-        // 로그인 성공 시, access token과 사용자 이름을 JSON으로 반환
-        Map<String, String> response = new HashMap<>();
-        response.put("accessToken", accessToken);
-        response.put("memberName", member.getName());
-
-        return ResponseEntity.ok(response);
     }
+
 
     // 로그인된 회원 정보를 반환하는 API
     @GetMapping("/member-info")
