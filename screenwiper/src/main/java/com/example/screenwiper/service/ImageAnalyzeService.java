@@ -9,6 +9,7 @@ import com.example.screenwiper.dto.ResponseDto;
 import com.example.screenwiper.domain.Category;
 import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.domain.TextData;
+import com.example.screenwiper.dto.TestUploadRequestDto;
 import com.example.screenwiper.repository.CategoryRepository;
 import com.example.screenwiper.repository.MemberRepository;
 import com.example.screenwiper.repository.TextDataRepository;
@@ -45,13 +46,17 @@ public class ImageAnalyzeService {
 
     public List<ResponseDto> analyzeImagesAndSave(ImageAnalyzeRequestDto requestDto) throws IOException {
         // 현재 로그인한 사용자 정보를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(authentication.getName()); // 사용자 ID를 토큰에서 가져온다고 가정
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Long memberId = Long.parseLong(authentication.getName()); // 사용자 ID를 토큰에서 가져온다고 가정
+        Long memberId = 1L; // 테스트를 위한 임시 값, 실제 사용 시에는 적절한 값으로 설정해야 합니다.
+
 
         List<MultipartFile> files = requestDto.getFiles();
         return files.stream().map(file -> {
             try {
+                // String imageUrl = uploadImageToS3(file);
                 String imageUrl = uploadImageToS3(file);
+
                 AIAnalysisResponseDto aiResponse = analyzeImage(imageUrl);
                 TextData savedData = saveTextData(memberId, aiResponse, file.getOriginalFilename(), imageUrl);
 
@@ -60,13 +65,15 @@ public class ImageAnalyzeService {
                 responseDto.setMemberId(memberId);
                 responseDto.setDate(savedData.getDate());
 
+
                 return responseDto;
+
             } catch (IOException e) {
                 throw new RuntimeException("Failed to upload or analyze image", e);
             }
         }).collect(Collectors.toList());
     }
-
+/*
     private String uploadImageToS3(MultipartFile image) throws IOException {
         File file = convertMultipartFileToFile(image);
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
@@ -77,6 +84,22 @@ public class ImageAnalyzeService {
         }
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
+*/
+    private String uploadImageToS3(MultipartFile image) throws IOException {
+        // MultipartFile을 File로 변환
+        File file = convertMultipartFileToFile(image);
+        // S3에 파일 업로드
+        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        /*
+        if (!file.delete()) {
+            System.err.println("Failed to delete temporary file: " + file.getAbsolutePath());
+        }
+        */
+        return amazonS3.getUrl(bucketName, fileName).toString();
+    }
+
 
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {
         File convertedFile = new File(file.getOriginalFilename());
@@ -114,5 +137,16 @@ public class ImageAnalyzeService {
         textData.setDate(aiResponse.getDate());
 
         return textDataRepository.save(textData);
+    }
+
+    public List<String> uploadImagesAndGetUrls(TestUploadRequestDto requestDto) throws IOException {
+        List<MultipartFile> files = requestDto.getFiles();
+        return files.stream().map(file -> {
+            try {
+                return uploadImageToS3(file);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
+        }).collect(Collectors.toList());
     }
 }
