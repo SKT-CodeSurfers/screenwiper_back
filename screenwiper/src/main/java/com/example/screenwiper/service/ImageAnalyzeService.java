@@ -174,7 +174,7 @@ public class ImageAnalyzeService {
         textData.setCategoryName(aiResponse.getCategoryName());
         textData.setTitle(aiResponse.getTitle());
         textData.setAddress(aiResponse.getAddress());
-        textData.setOperatingHours(aiResponse.getOperatingHours());
+        textData.setOperatingHours(aiResponse.getOperatingHours().toString());
         textData.setList(aiResponse.getList().stream()
                 .map(event -> event.getName() + ": " + event.getDate())
                 .collect(Collectors.toList()));
