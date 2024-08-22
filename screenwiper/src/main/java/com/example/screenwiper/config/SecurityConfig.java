@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.config;
 
 import org.springframework.context.annotation.Bean;
@@ -22,5 +23,5 @@ public class SecurityConfig {
     }
 }
 
-
+ */
 
