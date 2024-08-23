@@ -3,26 +3,18 @@ package com.example.screenwiper.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.example.screenwiper.dto.AIAnalysisResponseDto;
-import com.example.screenwiper.dto.ImageAnalyzeRequestDto;
-import com.example.screenwiper.dto.ResponseDto;
+import com.example.screenwiper.dto.*;
 import com.example.screenwiper.domain.Category;
 import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.domain.TextData;
-import com.example.screenwiper.dto.TestUploadRequestDto;
+import com.example.screenwiper.dto.request.AnalyzeRequestDto;
 import com.example.screenwiper.repository.CategoryRepository;
 import com.example.screenwiper.repository.MemberRepository;
 import com.example.screenwiper.repository.TextDataRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -124,42 +116,9 @@ public class ImageAnalyzeService {
     }
 
     private AIAnalysisResponseDto analyzeImage(String imageUrl) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // HTTP 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // 요청 바디 설정 (form-data 형식)
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("imageUrl", imageUrl);
-
-        // 요청 엔티티 생성
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-
-        try {
-            // POST 요청 전송
-            ResponseEntity<AIAnalysisResponseDto> responseEntity = restTemplate.exchange(
-                    aiModelApiUrl + "/analyze_image",
-                    HttpMethod.POST,
-                    requestEntity,
-                    AIAnalysisResponseDto.class
-            );
-
-
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                log.info("[RESPONSE]");
-                log.info(responseEntity.getBody().toString());
-                return responseEntity.getBody();
-            } else {
-                throw new RuntimeException("Failed to analyze image, status code: " + responseEntity.getStatusCode());
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error occurred while analyzing image: " + e.getMessage(), e);
-        }
+        AnalyzeRequestDto request = new AnalyzeRequestDto(imageUrl);
+        return restTemplate.postForObject(aiModelApiUrl + "/analyze_image", request, AIAnalysisResponseDto.class);
     }
-
     private TextData saveTextData(Long memberId, AIAnalysisResponseDto aiResponse, String photoName, String photoUrl) {
         TextData textData = new TextData();
 
