@@ -16,11 +16,11 @@ public class TextData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long photoId; // 기본 키
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
