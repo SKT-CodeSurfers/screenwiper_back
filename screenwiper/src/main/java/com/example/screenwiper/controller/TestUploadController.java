@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.controller;
 
 import com.example.screenwiper.dto.TestUploadRequestDto;
@@ -28,3 +29,5 @@ public class TestUploadController {
         }
     }
 }
+
+ */
