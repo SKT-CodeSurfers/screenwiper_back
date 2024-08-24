@@ -23,7 +23,7 @@ public class ResponseDto {
         this.categoryName = aiResponse.getCategoryName();
         this.title = aiResponse.getTitle();
         this.address = aiResponse.getAddress();
-        this.operatingHours = aiResponse.getOperatingHours();
+        this.operatingHours = aiResponse.getOperatingHours().toString();
         this.list = aiResponse.getList();
         this.summary = aiResponse.getSummary();
         this.photoName = aiResponse.getPhotoName();

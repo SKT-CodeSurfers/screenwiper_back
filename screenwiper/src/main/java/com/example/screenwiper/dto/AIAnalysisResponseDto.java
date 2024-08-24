@@ -7,7 +7,7 @@ import java.util.List;
 public class AIAnalysisResponseDto {
     private String title;
     private String address;
-    private String operatingHours;
+    private String[] operatingHours;
     private List<Event> list;
     private String summary;
     private String photoName;

@@ -3,20 +3,17 @@ package com.example.screenwiper.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.example.screenwiper.dto.AIAnalysisResponseDto;
-import com.example.screenwiper.dto.ImageAnalyzeRequestDto;
-import com.example.screenwiper.dto.ResponseDto;
+import com.example.screenwiper.dto.*;
 import com.example.screenwiper.domain.Category;
 import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.domain.TextData;
-import com.example.screenwiper.dto.TestUploadRequestDto;
+import com.example.screenwiper.dto.request.AnalyzeRequestDto;
 import com.example.screenwiper.repository.CategoryRepository;
 import com.example.screenwiper.repository.MemberRepository;
 import com.example.screenwiper.repository.TextDataRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +24,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+@Slf4j
 
 @Service
 @RequiredArgsConstructor
@@ -53,11 +52,15 @@ public class ImageAnalyzeService {
 
         List<MultipartFile> files = requestDto.getFiles();
         return files.stream().map(file -> {
+
             try {
                 // String imageUrl = uploadImageToS3(file);
                 String imageUrl = uploadImageToS3(file);
 
                 AIAnalysisResponseDto aiResponse = analyzeImage(imageUrl);
+                log.info("Response ");
+                log.info(aiResponse.toString());
+
                 TextData savedData = saveTextData(memberId, aiResponse, file.getOriginalFilename(), imageUrl);
 
                 ResponseDto responseDto = new ResponseDto(aiResponse);
@@ -69,6 +72,8 @@ public class ImageAnalyzeService {
                 return responseDto;
 
             } catch (IOException e) {
+                log.error("Service");
+                e.printStackTrace();
                 throw new RuntimeException("Failed to upload or analyze image", e);
             }
         }).collect(Collectors.toList());
@@ -97,7 +102,8 @@ public class ImageAnalyzeService {
             System.err.println("Failed to delete temporary file: " + file.getAbsolutePath());
         }
         */
-        return amazonS3.getUrl(bucketName, fileName).toString();
+        String url = amazonS3.getUrl(bucketName, fileName).toString();
+        return url;
     }
 
 
@@ -110,9 +116,9 @@ public class ImageAnalyzeService {
     }
 
     private AIAnalysisResponseDto analyzeImage(String imageUrl) {
-        return restTemplate.postForObject(aiModelApiUrl + "/analyze_image", imageUrl, AIAnalysisResponseDto.class);
+        AnalyzeRequestDto request = new AnalyzeRequestDto(imageUrl);
+        return restTemplate.postForObject(aiModelApiUrl + "/analyze_image", request, AIAnalysisResponseDto.class);
     }
-
     private TextData saveTextData(Long memberId, AIAnalysisResponseDto aiResponse, String photoName, String photoUrl) {
         TextData textData = new TextData();
 
@@ -127,7 +133,7 @@ public class ImageAnalyzeService {
         textData.setCategoryName(aiResponse.getCategoryName());
         textData.setTitle(aiResponse.getTitle());
         textData.setAddress(aiResponse.getAddress());
-        textData.setOperatingHours(aiResponse.getOperatingHours());
+        textData.setOperatingHours(aiResponse.getOperatingHours().toString());
         textData.setList(aiResponse.getList().stream()
                 .map(event -> event.getName() + ": " + event.getDate())
                 .collect(Collectors.toList()));
