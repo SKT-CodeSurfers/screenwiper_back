@@ -299,10 +299,12 @@ public class ImageAnalyzeService {
         return convertedFile;
     }
 
-    private AIAnalysisResponseDto analyzeImage(String imageUrl) {
-        AnalyzeRequestDto request = new AnalyzeRequestDto(imageUrl);
+    public AIAnalysisResponseDto sendS3FileToAImodel(String imageUrl) {
+        // 이미지 URL을 리스트에 추가
+        AnalyzeRequestDto request = new AnalyzeRequestDto(Collections.singletonList(imageUrl));
         return restTemplate.postForObject(aiModelApiUrl + "/analyze_image", request, AIAnalysisResponseDto.class);
     }
+
     private TextData saveTextData(Long memberId, AIAnalysisResponseDto aiResponse, String photoName, String photoUrl) {
         TextData textData = new TextData();
 

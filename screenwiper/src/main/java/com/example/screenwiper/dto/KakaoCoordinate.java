@@ -1,14 +1,20 @@
 package com.example.screenwiper.dto;
 
-import lombok.Data;
-
-@Data
 public class KakaoCoordinate {
-    private final String x;
-    private final String y;
+    private double x;
+    private double y;
 
-    public KakaoCoordinate(String x, String y) {
+    public KakaoCoordinate(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    // Getter methods
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 }

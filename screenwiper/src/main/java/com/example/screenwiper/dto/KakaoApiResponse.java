@@ -9,7 +9,9 @@ public class KakaoApiResponse {
 
     @Data
     public static class Document {
-        private String x;  // 경도 (Longitude)
-        private String y;  // 위도 (Latitude)
+        private String placeName; // 장소 이름
+        private String addressName; // 주소 이름
+        private String x; // 경도
+        private String y; // 위도
     }
 }
