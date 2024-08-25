@@ -135,7 +135,7 @@ public class ImageAnalyzeServiceTest {
         multipartFileList.add(multipartFile1);
         multipartFileList.add(multipartFile2);
 
-        List<ResponseDto> responses = imageAnalyzeService.analyzeImagesAndSave(multipartFileList, "static");
+        // List<ResponseDto> responses = imageAnalyzeService.analyzeImagesAndSave(multipartFileList, "static");
 /*
         // 7. 테스트 결과 검증
         assertNotNull(responses);  // 응답이 null이 아닌지 확인

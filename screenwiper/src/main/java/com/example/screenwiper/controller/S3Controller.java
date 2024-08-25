@@ -2,9 +2,11 @@ package com.example.screenwiper.controller;
 
 import com.example.screenwiper.S3Uploader;
 import com.example.screenwiper.domain.TextData;
-import com.example.screenwiper.dto.AIAnalysisResponseDto;
-import com.example.screenwiper.dto.ApiResponse;
+import com.example.screenwiper.dto.AIAnalysisResponseWrapperDto;
 import com.example.screenwiper.dto.ResponseDto;
+import com.example.screenwiper.dto.ApiResponse;
+import com.example.screenwiper.dto.KakaoCoordinate;
+import com.example.screenwiper.service.KakaoMapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Collections;
+
+
 
 @Slf4j
 @RestController
@@ -33,7 +39,8 @@ public class S3Controller {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("memberId") Long memberId) {
         try {
-            List<ResponseDto> responseList = new ArrayList<>();
+            // 이미지 URL을 저장할 리스트
+            List<String> imageUrls = new ArrayList<>();
 
             for (MultipartFile file : files) {
                 // 파일을 로컬에 저장
@@ -41,21 +48,38 @@ public class S3Controller {
 
                 // 파일을 S3에 업로드하고 URL을 가져옴
                 String imageUrl = s3Uploader.upload(localFile.getAbsolutePath());
+                imageUrls.add(imageUrl);
 
-                // 파일을 AI 모델에 전송하여 분석
-                AIAnalysisResponseDto aiResponse = s3Uploader.sendS3FileToAImodel(imageUrl);
-
-                // 분석 결과를 데이터베이스에 저장
-                TextData savedTextData = s3Uploader.saveTextData(memberId, aiResponse);
-
-                // ResponseDto 생성 및 설정
-                ResponseDto responseDto = new ResponseDto(aiResponse);
-                responseDto.setPhotoId(savedTextData.getPhotoId());
-                responseDto.setMemberId(memberId);
-                responseDto.setDate(LocalDateTime.now().toString());
-
-                responseList.add(responseDto);
+                // 로컬 파일 삭제 (옵션)
+                localFile.delete();
             }
+
+            // AI 모델에 전송하여 분석
+            // List<ResponseDto> responseList = s3Uploader.processImagesAndSaveResults(imageUrls, memberId);
+
+            // AI 모델에 전송하여 분석 결과 받기
+            AIAnalysisResponseWrapperDto aiResponseWrapper = s3Uploader.sendS3FileToAImodel(imageUrls);
+
+            // 데이터베이스에 결과 저장
+            List<TextData> savedTextDataList = s3Uploader.saveTextData(memberId, aiResponseWrapper);
+
+            // ResponseDto 리스트로 변환
+            List<ResponseDto> responseList = savedTextDataList.stream()
+                    .map(textData -> {
+                        ResponseDto responseDto = new ResponseDto();
+                        responseDto.setPhotoId(textData.getPhotoId());
+                        responseDto.setMemberId(memberId);
+                        responseDto.setDate(LocalDateTime.now().toString());
+                        responseDto.setTitle(textData.getTitle());
+                        responseDto.setAddress(textData.getAddress());
+                        responseDto.setOperatingHours(textData.getOperatingHours());
+                        responseDto.setList(textData.getList() != null ? textData.getList() : Collections.emptyList());
+                        responseDto.setSummary(textData.getSummary());
+                        responseDto.setPhotoName(textData.getPhotoName());
+                        responseDto.setPhotoUrl(textData.getPhotoUrl());
+                        return responseDto;
+                    })
+                    .collect(Collectors.toList());
 
             // 성공 응답 반환
             return ResponseEntity.ok(new ApiResponse(true, "Created", responseList));
