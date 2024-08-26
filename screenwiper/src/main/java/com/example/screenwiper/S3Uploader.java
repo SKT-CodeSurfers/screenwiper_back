@@ -107,6 +107,7 @@ public class S3Uploader {
         // HTTP 엔티티 설정
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
+        System.out.println("AI 모델 API 호출: --------------- ");
         // AI 모델 API 호출
         ResponseEntity<AIAnalysisResponseWrapperDto> response = restTemplate.exchange(
                 aiModelApiUrl + "/analyze_images",

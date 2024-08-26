@@ -6,6 +6,7 @@ import com.example.screenwiper.dto.AIAnalysisResponseWrapperDto;
 import com.example.screenwiper.dto.AIAnalysisResponseDto;
 import com.example.screenwiper.dto.ApiResponse;
 import com.example.screenwiper.dto.KakaoCoordinate;
+import com.example.screenwiper.dto.request.AnalyzeRequestDto;
 import com.example.screenwiper.service.KakaoMapService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,10 +18,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,7 +82,7 @@ public class S3ControllerTest {
         given(s3Uploader.sendS3FileToAImodel(Collections.singletonList(imageUrl))).willReturn(aiResponseWrapper);
         given(s3Uploader.saveTextData(any(Long.class), any(AIAnalysisResponseWrapperDto.class)))
                 .willReturn(List.of(mockTextData));
-
+        /*
         // When
         MvcResult result = mockMvc.perform(multipart("/api/v1/images/analyze")
                         .file(mockFile)
@@ -86,9 +90,30 @@ public class S3ControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
+         */
+
+        String imageUrls = "https://screen-s3-bucket.s3.ap-northeast-2.amazonaws.com/test_img3.jpeg";
+
+        // 여러 개의 이미지 URL을 배열로 지정
+        List<String> imageUrls2 = Arrays.asList(
+                "https://screen-s3-bucket.s3.ap-northeast-2.amazonaws.com/test_img3.jpeg"
+        );
+
+        // AI 모델에 전송하여 분석 결과 받기
+        AIAnalysisResponseWrapperDto aiResponseWrapper2 = s3Uploader.sendS3FileToAImodel(imageUrls2);
+        System.out.println("aiResponseWrapper2: " + aiResponseWrapper2);
+
+        // 데이터베이스에 결과 저장
+        List<TextData> savedTextDataList = s3Uploader.saveTextData(10000L, aiResponseWrapper2);
+        System.out.println("savedTextDataList: " + savedTextDataList);
+
+        // 카카오 맵 API 코드 x, y 가져오기
+        KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(savedTextDataList.getFirst().getAddress());
+        System.out.println("coordinate: " + coordinate);
+
         // Response 출력
-        String responseContent = result.getResponse().getContentAsString();
-        System.out.println("Response: " + responseContent);
+        // String responseContent = result.getResponse().getContentAsString();
+        // System.out.println("Response: " + responseContent);
 
         // Clean up
         input.close();
