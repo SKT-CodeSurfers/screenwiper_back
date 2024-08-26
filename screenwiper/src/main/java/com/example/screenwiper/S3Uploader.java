@@ -109,7 +109,7 @@ public class S3Uploader {
 
         // AI 모델 API 호출
         ResponseEntity<AIAnalysisResponseWrapperDto> response = restTemplate.exchange(
-                aiModelApiUrl + "/analyze_image",
+                aiModelApiUrl + "/analyze_images",
                 HttpMethod.POST,
                 entity,
                 AIAnalysisResponseWrapperDto.class
