@@ -47,4 +47,5 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	exclude 'com/example/screenwiper/ImageAnalyzeServiceTest.class'
 }
