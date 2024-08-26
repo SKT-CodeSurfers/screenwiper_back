@@ -13,11 +13,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .anyRequest().permitAll()  // 모든 요청을 인증 없이 접근 가능
+                                .requestMatchers("/api/login-url", "/api/callback").permitAll()  // 인증 없이 접근 가능
+                                .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
                 .csrf(csrf -> csrf.disable());  // CSRF 비활성화 (필요에 따라 설정)
 
         return http.build();
     }
 }
+
+
 
