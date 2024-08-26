@@ -33,6 +33,7 @@ import java.util.Collections;
 public class S3Controller {
 
     private final S3Uploader s3Uploader;
+    private final KakaoMapService kakaoMapService; // KakaoMapService 주입
 
     @PostMapping("/analyze")
     public ResponseEntity<ApiResponse> analyzeImages(
@@ -63,12 +64,18 @@ public class S3Controller {
             // 데이터베이스에 결과 저장
             List<TextData> savedTextDataList = s3Uploader.saveTextData(memberId, aiResponseWrapper);
 
+            // 카카오 맵 API 코드 x, y 가져오기
+            // KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(savedTextDataList.getFirst().getAddress());
+            // System.out.println("coordinate: " + coordinate);
+
             // ResponseDto 리스트로 변환
             List<ResponseDto> responseList = savedTextDataList.stream()
                     .map(textData -> {
                         ResponseDto responseDto = new ResponseDto();
                         responseDto.setPhotoId(textData.getPhotoId());
                         responseDto.setMemberId(memberId);
+                        responseDto.setCategoryId(textData.getCategory().getId());
+                        responseDto.setCategoryName(textData.getCategoryName());
                         responseDto.setDate(LocalDateTime.now().toString());
                         responseDto.setTitle(textData.getTitle());
                         responseDto.setAddress(textData.getAddress());
@@ -77,6 +84,18 @@ public class S3Controller {
                         responseDto.setSummary(textData.getSummary());
                         responseDto.setPhotoName(textData.getPhotoName());
                         responseDto.setPhotoUrl(textData.getPhotoUrl());
+                        // responseDto.setXCoordinate();
+                        // responseDto.setYCoordinate();
+                        // 주소를 이용해 좌표 가져오기
+                        try {
+                            KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
+                            responseDto.setXCoordinate(Double.toString(coordinate.getX())); // double을 String으로 변환
+                            responseDto.setYCoordinate(Double.toString(coordinate.getY())); // double을 String으로 변환
+                        } catch (Exception e) {
+                            log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
+                            responseDto.setXCoordinate(null); // 좌표를 찾지 못한 경우 null 처리
+                            responseDto.setYCoordinate(null);
+                        }
                         return responseDto;
                     })
                     .collect(Collectors.toList());

@@ -10,11 +10,11 @@ public class KakaoCoordinate {
     }
 
     // Getter methods
-    public double getX() {
+    public double getX() { // 반환 타입을 double로 변경
         return x;
     }
 
-    public double getY() {
+    public double getY() { // 반환 타입을 double로 변경
         return y;
     }
 }
