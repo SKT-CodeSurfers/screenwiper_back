@@ -1,3 +1,4 @@
+
 package com.example.screenwiper.controller;
 
 import jakarta.servlet.http.HttpSession;
@@ -76,6 +77,8 @@ public class KakaoLoginController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Login successful");
             response.put("name", member.getName());
+            response.put("accessToken", accessToken); // 액세스 토큰을 응답에 추가
+
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

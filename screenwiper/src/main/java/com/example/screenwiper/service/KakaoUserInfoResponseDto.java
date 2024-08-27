@@ -1,3 +1,4 @@
+
 package com.example.screenwiper.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

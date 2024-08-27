@@ -25,4 +25,5 @@ public class Member {
     private LocalTime time;
     private boolean enabled;
 
+
 }
