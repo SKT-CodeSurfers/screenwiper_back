@@ -14,7 +14,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/login-url", "/api/callback").permitAll()  // 인증 없이 접근 가능
-                                .requestMatchers("/api/photos/list").permitAll()  // /api/photos/list 엔드포인트에 대한 접근 허용
+                                .requestMatchers("/api/photos/list","http://15.164.115.105:8080/analyze_images","/api/v1/images/analyze").permitAll()  // /api/photos/list 엔드포인트에 대한 접근 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
                 .csrf(csrf -> csrf.disable());  // CSRF 비활성화 (필요에 따라 설정)
