@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/login-url", "/api/callback").permitAll()  // 인증 없이 접근 가능
+                                .requestMatchers("/api/login-url", "/api/callback","/api/member-info").permitAll()  // 인증 없이 접근 가능
                                 .requestMatchers("/api/photos/list","http://15.164.115.105:8080/analyze_images","/api/v1/images/analyze").permitAll()  // /api/photos/list 엔드포인트에 대한 접근 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
@@ -32,7 +32,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://15.164.115.105:8080")); // 외부 API 출처 허용
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메서드
-        configuration.setAllowCredentials(true); // 자격 증명 허용 (필요한 경우)
+        configuration.setAllowCredentials(true); //자격증명 허용 코드 (필요에 따라 지워도 괜찮음)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
