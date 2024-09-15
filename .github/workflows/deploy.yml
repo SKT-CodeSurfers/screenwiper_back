@@ -8,6 +8,10 @@ jobs:
   ci:
     runs-on: ubuntu-20.04
 
+    defaults:
+      run:
+        working-directory: screenwiper
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,5 +41,5 @@ jobs:
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -f ./screenwiper/Dockerfile -t yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}} ./screenwiper
+          docker build -f ./Dockerfile -t yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}} .
           docker push yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
