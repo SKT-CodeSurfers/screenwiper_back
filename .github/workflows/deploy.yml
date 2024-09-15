@@ -1,4 +1,4 @@
-name: deploy-actions
+name: Deploy screenwiper_back
 
 on:
   push:
@@ -55,9 +55,14 @@ jobs:
             echo "🐳 Docker Image Pull"
             docker pull yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
             
-            # Stop & Start
+            # Stop & Remove existing container if exists
             echo "🐳 Docker Stop & Start"
             docker stop screenwiper_back || true
+            docker rm screenwiper_back || true
+            docker run --rm -d --name screenwiper_back -p 8080:8080 yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
+            
+            # Start new container
+            echo "🐳 Docker Start"
             docker run --rm -d --name screenwiper_back -p 8080:8080 yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
             
             # Check
