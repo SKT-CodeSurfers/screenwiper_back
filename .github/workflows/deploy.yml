@@ -7,6 +7,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-20.04
+    outputs:
+      pr-number: ${{ steps.set-docker-tag.outputs.DOCKER_TAG }}
 
     defaults:
       run:
@@ -46,13 +48,13 @@ jobs:
 
       - name: Set Docker Tag Output
         id: set-docker-tag
-        run: echo "docker-tag=${{ steps.current-time.outputs.formattedTime }}" >> $GITHUB_OUTPUT
+        run: echo "DOCKER_TAG=${{ steps.current-time.outputs.formattedTime }}" >> $GITHUB_OUTPUT
 
   cd:
     runs-on: ubuntu-20.04
-    needs: ci
+    needs: [ci]
     env:
-      DOCKER_TAG: ${{ needs.ci.outputs.docker-tag }}
+      DOCKER_TAG: ${{ needs.ci.outputs.DOCKER_TAG }}
 
     steps:
       - name: Deploy
