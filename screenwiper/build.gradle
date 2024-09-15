@@ -47,6 +47,14 @@ dependencies {
 
 }
 
+task copySecret(type: Copy) {
+	copy {
+		from './screenwiper_back-properties'
+		include "*.properties"
+		into 'src/main/resources'
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 	exclude 'com/example/screenwiper/ImageAnalyzeServiceTest.class'
