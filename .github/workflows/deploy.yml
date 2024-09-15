@@ -1,0 +1,41 @@
+name: deploy-actions
+
+on:
+  push:
+    branches: [ '**' ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3성
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          submodules: true
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2.0.2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00"
+
+      - name: Docker build
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker build -f ./screenwiper/Dockerfile -t yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}} ./screenwiper
+          docker push yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
