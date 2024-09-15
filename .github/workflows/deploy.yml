@@ -2,7 +2,7 @@ name: Deploy screenwiper_back
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'main' ]
 
 jobs:
   ci:
