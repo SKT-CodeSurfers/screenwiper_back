@@ -1,0 +1,3 @@
+[submodule "screenwiper/screenwiper_back-properties"]
+	path = screenwiper/screenwiper_back-properties
+	url = https://github.com/SKT-CodeSurfers/screenwiper_back-properties.git
