@@ -43,3 +43,27 @@ jobs:
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker build -f ./Dockerfile -t yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}} .
           docker push yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Pull the new image
+            echo "🐳 Docker Image Pull"
+            docker pull yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
+            
+            # Stop & Start
+            echo "🐳 Docker Stop & Start"
+            docker stop screenwiper_back || true
+            docker run --rm -d --name screenwiper_back -p 8080:8080 yusiny/screenwiper_back:${{steps.current-time.outputs.formattedTime}}
+            
+            # Check
+            echo "🐳 Docker ps"
+            docker ps
+            
+            # Cleanup old images
+            echo "🧹 Cleaning up old Docker images"
+            docker rmi -f $(docker images -q) || true
