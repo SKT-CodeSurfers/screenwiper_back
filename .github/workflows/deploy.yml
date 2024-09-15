@@ -8,7 +8,7 @@ jobs:
   ci:
     runs-on: ubuntu-20.04
     outputs:
-      pr-number: ${{ steps.set-docker-tag.outputs.DOCKER_TAG }}
+      docker-tag: ${{ steps.set-docker-tag.outputs.DOCKER_TAG }}
 
     defaults:
       run:
@@ -46,15 +46,15 @@ jobs:
           docker build -f ./Dockerfile -t yusiny/screenwiper_back:${{ steps.current-time.outputs.formattedTime }} .
           docker push yusiny/screenwiper_back:${{ steps.current-time.outputs.formattedTime }}
 
-      - name: Set Docker Tag Output
+      - name:  Set Docker Tag Output
         id: set-docker-tag
-        run: echo "DOCKER_TAG=${{ steps.current-time.outputs.formattedTime }}" >> $GITHUB_OUTPUT
+        run: echo 'DOCKER_TAG=${{ steps.current-time.outputs.formattedTime }}' >> $GITHUB_OUTPUT
 
   cd:
     runs-on: ubuntu-20.04
     needs: [ci]
     env:
-      DOCKER_TAG: ${{ needs.ci.outputs.DOCKER_TAG }}
+      DOCKER_TAG: ${{ needs.ci.outputs.docker-tag }}
 
     steps:
       - name: Deploy
