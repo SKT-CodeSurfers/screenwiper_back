@@ -46,7 +46,7 @@ jobs:
 
       - name: Set Docker Tag Output
         id: set-docker-tag
-        run: echo "DOCKER_TAG=${{ steps.current-time.outputs.formattedTime }}" >> $GITHUB_ENV
+        run: echo "docker-tag=${{ steps.current-time.outputs.formattedTime }}" >> $GITHUB_OUTPUT
 
   cd:
     runs-on: ubuntu-20.04
@@ -62,6 +62,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Check docker tags
+            echo "🐳 Docker Tag: ${{ env.DOCKER_TAG }}"
+            
             # Pull the new image
             echo "🐳 Docker Image Pull"
             docker pull yusiny/screenwiper_back:${{ env.DOCKER_TAG }}
