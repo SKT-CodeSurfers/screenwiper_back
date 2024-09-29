@@ -1,4 +1,3 @@
-
 package com.example.screenwiper.controller;
 
 import jakarta.servlet.http.HttpSession;
@@ -51,9 +50,11 @@ public class KakaoLoginController {
         try {
             log.info("Authorization code: " + code);
 
+            // 카카오로부터 액세스 토큰을 받아옴
             String accessToken = kakaoService.getAccessTokenFromKakao(code);
             log.info("AccessToken: " + accessToken);
 
+            // 사용자 정보를 가져옴
             KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
             log.info("User Info: " + userInfo);
 
@@ -61,24 +62,32 @@ public class KakaoLoginController {
             String nickName = userInfo.getKakaoAccount().getProfile().getNickName();
             String email = userInfo.getKakaoAccount().getEmail();
 
+            // 회원이 존재하지 않으면 새로운 회원 등록
             if (!memberService.isMemberExist(kakaoId)) {
                 Member newMember = new Member();
                 newMember.setId(kakaoId);
                 newMember.setName(nickName);
                 newMember.setEmail(email);
+                newMember.setAccessToken(accessToken); // 액세스 토큰 저장
                 memberService.join(newMember);
                 log.info("New member joined: " + newMember.getName());
+            } else {
+                // 기존 회원의 액세스 토큰 업데이트
+                Member existingMember = memberService.login(kakaoId);
+                existingMember.setAccessToken(accessToken); // 액세스 토큰 업데이트
+                memberService.update(existingMember); // 업데이트 메소드 호출
             }
 
+            // 로그인 처리
             Member member = memberService.login(kakaoId);
             session.setAttribute("loginMember", member);
             log.info("Member logged in and saved to session: " + member.getName());
 
+            // 응답 생성
             Map<String, String> response = new HashMap<>();
             response.put("message", "Login successful");
             response.put("name", member.getName());
             response.put("accessToken", accessToken); // 액세스 토큰을 응답에 추가
-
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -86,7 +95,6 @@ public class KakaoLoginController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", "Failed to login with Kakao"));
         }
     }
-
 
     // 로그인된 회원 정보를 반환하는 API
     @GetMapping("/member-info")
@@ -103,7 +111,7 @@ public class KakaoLoginController {
     // 회원 탈퇴 로직
     @DeleteMapping("/members/{memberId}")
     public ResponseEntity<String> deleteMember(@PathVariable Long memberId) {
-        log.info("Deleting memberID :"+ memberId);
+        log.info("Deleting memberID :" + memberId);
         boolean isDeleted = memberService.deleteMember(memberId);
 
         if (isDeleted) {
