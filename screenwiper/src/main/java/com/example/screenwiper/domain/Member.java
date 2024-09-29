@@ -18,6 +18,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<TextData> textDataList;
 
+    // 액세스 토큰을 저장할 필드 추가
+    private String accessToken;
+
     private String name;
     private String email;
 

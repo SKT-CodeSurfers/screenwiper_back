@@ -1,4 +1,3 @@
-
 package com.example.screenwiper.service;
 
 import com.example.screenwiper.domain.Member;
@@ -29,8 +28,7 @@ public class MemberService {
 
     @Transactional(readOnly = false)
     public Member login(Long id) {
-        Member member = memberRepository.findOne(id);
-        return member;
+        return memberRepository.findOne(id);
     }
 
     @Transactional
@@ -44,6 +42,9 @@ public class MemberService {
         }
     }
 
-
-
+    // 기존 회원의 액세스 토큰 업데이트
+    @Transactional(readOnly = false)
+    public void update(Member member) {
+        memberRepository.save(member); // 엔티티를 업데이트
+    }
 }
