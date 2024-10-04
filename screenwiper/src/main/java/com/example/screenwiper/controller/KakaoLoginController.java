@@ -5,6 +5,9 @@ import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.service.KakaoService;
 import com.example.screenwiper.service.KakaoUserInfoResponseDto;
 import com.example.screenwiper.service.MemberService;
+import com.example.screenwiper.service.TokenService; // TokenService 임포트
+import com.example.screenwiper.repository.TokenRepository; // TokenRepository 임포트
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +27,8 @@ public class KakaoLoginController {
 
     private final KakaoService kakaoService;
     private final MemberService memberService;
+    private final TokenService tokenService; // TokenService 인스턴스 추가
+
 
     @Value("${kakao.client_id}")
     private String clientId;
@@ -52,7 +57,9 @@ public class KakaoLoginController {
 
             // 카카오로부터 액세스 토큰을 받아옴
             String accessToken = kakaoService.getAccessTokenFromKakao(code);
+            String refreshToken = kakaoService.getRefreshTokenFromKakao(code); // 카카오에서 refreshToken도 받아옴
             log.info("AccessToken: " + accessToken);
+            log.info("RefreshToken: " + refreshToken);
 
             // 사용자 정보를 가져옴
             KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
@@ -72,10 +79,8 @@ public class KakaoLoginController {
                 memberService.join(newMember);
                 log.info("New member joined: " + newMember.getName());
             } else {
-                // 기존 회원의 액세스 토큰 업데이트
                 Member existingMember = memberService.login(kakaoId);
-                existingMember.setAccessToken(accessToken); // 액세스 토큰 업데이트
-                memberService.update(existingMember); // 업데이트 메소드 호출
+                tokenService.updateToken(existingMember.getId(), accessToken, refreshToken); // 인스턴스를 통해 호출
             }
 
             // 로그인 처리
@@ -88,6 +93,7 @@ public class KakaoLoginController {
             response.put("message", "Login successful");
             response.put("name", member.getName());
             response.put("accessToken", accessToken); // 액세스 토큰을 응답에 추가
+            response.put("refreshToken", refreshToken); // refreshToken도 응답에 추가
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
