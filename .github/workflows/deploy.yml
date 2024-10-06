@@ -73,8 +73,7 @@ jobs:
             
             # Stop & Remove existing container if exists
             echo "🐳 Docker Stop & Remove"
-            docker stop screenwiper_back || true
-            docker rm screenwiper_back || true
+            docker stop screenwiper_back
             
             # Start new container
             echo "🐳 Docker Run"
