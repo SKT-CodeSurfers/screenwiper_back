@@ -70,10 +70,12 @@ jobs:
             # Pull the new image
             echo "🐳 Docker Image Pull"
             docker pull yusiny/screenwiper_back:${{ env.DOCKER_TAG }}
-            
+
             # Stop & Remove existing container if exists
-            echo "🐳 Docker Stop & Remove"
-            docker stop screenwiper_back
+            if [ $(docker ps -q -f name=screenwiper_back) ]; then
+              echo "🐳 Docker Stop"
+              docker stop screenwiper_back
+            fi
             
             # Start new container
             echo "🐳 Docker Run"
