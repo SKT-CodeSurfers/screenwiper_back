@@ -35,7 +35,7 @@ public class TextDataController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", "True");
         response.put("message", "GET LIST");
-        response.put("test", "deploy test");
+        response.put("test", "deploy test2222");
 
         List<Map<String, Object>> photos = textDataPage.getContent().stream().map(textData -> {
             Map<String, Object> photo = new HashMap<>();
