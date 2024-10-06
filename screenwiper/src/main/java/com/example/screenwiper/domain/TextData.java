@@ -14,6 +14,7 @@ public class TextData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "photo_id") // 데이터베이스 컬럼명 지정
     private Long photoId; // 기본 키
 
     @ManyToOne(fetch = FetchType.LAZY)
