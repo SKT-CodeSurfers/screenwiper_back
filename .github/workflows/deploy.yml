@@ -73,9 +73,9 @@ jobs:
 
             # Stop & Remove existing container if exists
             if [ $(docker ps -q -f name=screenwiper_back) ]; then
-              echo "🐳 Docker Stop & Remove"
+              echo "🐳 Docker Stop"
               docker stop screenwiper_back
-              docker rm screenwiper_back
+              sleep 3
             fi
             
             # Start new container
