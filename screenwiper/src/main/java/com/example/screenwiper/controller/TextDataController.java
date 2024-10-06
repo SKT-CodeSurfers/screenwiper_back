@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,6 +63,38 @@ public class TextDataController {
         data.put("totalElements", textDataPage.getTotalElements());
 
         response.put("data", data);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/api/photos/{photoId}")
+    public ResponseEntity<Map<String, Object>> getTextDataById(@PathVariable Long photoId) {
+        TextData textData = textDataService.getTextDataById(photoId);
+
+        if (textData == null) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "success", "False",
+                    "message", "Data not found"
+            ));
+        }
+
+        Map<String, Object> photo = new HashMap<>();
+        photo.put("photoId", textData.getPhotoId());
+        photo.put("userId", textData.getMember() != null ? textData.getMember().getId() : null);
+        photo.put("categoryId", textData.getCategory() != null ? textData.getCategory().getId() : null);
+        photo.put("title", textData.getTitle());
+        photo.put("address", textData.getAddress());
+        photo.put("operatingHours", textData.getOperatingHours());
+        photo.put("list", textData.getList());
+        photo.put("summary", textData.getSummary());
+        photo.put("photoName", textData.getPhotoName());
+        photo.put("photoUrl", textData.getPhotoUrl());
+        photo.put("date", textData.getDate());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", "True");
+        response.put("message", "GET DETAIL");
+        response.put("data", photo);
 
         return ResponseEntity.ok(response);
     }

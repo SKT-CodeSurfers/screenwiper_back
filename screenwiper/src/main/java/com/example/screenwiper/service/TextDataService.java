@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TextDataService {
 
@@ -19,5 +21,10 @@ public class TextDataService {
         } else {
             return textDataRepository.findAll(pageable);
         }
+    }
+
+    public TextData getTextDataById(Long id) {
+        Optional<TextData> textDataOptional = textDataRepository.findById(id);
+        return textDataOptional.orElse(null); // 데이터가 없으면 null 반환
     }
 }
