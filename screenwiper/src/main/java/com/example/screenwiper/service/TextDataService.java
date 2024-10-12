@@ -33,24 +33,24 @@ public class TextDataService {
         return textDataOptional.orElse(null); // 데이터가 없으면 null 반환
     }
 
-    // 카테고리 업데이트 메서드
-    public TextData updateCategory(Long photoId, Long categoryId) {
+    // 카테고리 이름으로 카테고리 업데이트 메서드
+    public TextData updateCategoryByName(Long photoId, String categoryName) {
         Optional<TextData> textDataOptional = textDataRepository.findById(photoId);
         if (textDataOptional.isPresent()) {
             TextData textData = textDataOptional.get();
 
-            // 카테고리 찾기
-            Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+            // 카테고리 이름으로 카테고리 찾기
+            Optional<Category> categoryOptional = categoryRepository.findByCategoryName(categoryName);
             if (categoryOptional.isPresent()) {
-                // 카테고리 업데이트
                 Category category = categoryOptional.get();
+                // 카테고리 업데이트
                 textData.setCategory(category);
                 textData.setCategoryName(category.getCategoryName());
 
                 // 변경 사항 저장
                 return textDataRepository.save(textData);
             } else {
-                throw new IllegalArgumentException("Invalid category ID: " + categoryId);
+                throw new IllegalArgumentException("Category not found: " + categoryName);
             }
         } else {
             throw new IllegalArgumentException("Invalid photo ID: " + photoId);
