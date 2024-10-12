@@ -56,4 +56,13 @@ public class TextDataService {
             throw new IllegalArgumentException("올바르지 않은 photo ID: " + photoId);
         }
     }
+
+    public boolean deleteTextDataById(Long id) {
+        Optional<TextData> textDataOptional = textDataRepository.findById(id);
+        if (textDataOptional.isPresent()) {
+            textDataRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
