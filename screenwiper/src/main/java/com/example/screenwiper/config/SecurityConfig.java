@@ -10,6 +10,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.http.HttpMethod.*;
+
 @Configuration
 public class SecurityConfig {
 
@@ -18,8 +20,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/login-url", "/api/callback","/api/member-info").permitAll()  // 인증 없이 접근 가능
-                                .requestMatchers("/api/photos/list","http://15.164.115.105:8080/analyze_images","/api/v1/images/analyze", "/api/photos/{photoId}").permitAll()  // 접근 허용
+                                .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
+                                .requestMatchers("/api/photos/list", "http://15.164.115.105:8080/analyze_images", "/api/v1/images/analyze").permitAll()  // 접근 허용
+                                .requestMatchers(GET, "/api/photos/{photoId}").permitAll()   // GET 요청 허용
+                                .requestMatchers(PUT, "/api/photos/{photoId}").permitAll()   // PUT 요청 허용
+                                .requestMatchers(DELETE, "/api/photos/{photoId}").permitAll() // DELETE 요청 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
                 .csrf(csrf -> csrf.disable());  // CSRF 비활성화 (필요에 따라 설정)
