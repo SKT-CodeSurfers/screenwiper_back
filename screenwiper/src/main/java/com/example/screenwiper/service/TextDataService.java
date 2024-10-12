@@ -50,7 +50,7 @@ public class TextDataService {
                 // 변경 사항 저장
                 return textDataRepository.save(textData);
             } else {
-                throw new IllegalArgumentException("해당 카테고리는 없는 카테고리 입니다.: " + categoryName);
+                throw new IllegalArgumentException("해당 카테고리는 없는 카테고리 입니다: " + categoryName);
             }
         } else {
             throw new IllegalArgumentException("올바르지 않은 photo ID: " + photoId);
