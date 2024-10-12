@@ -7,10 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -97,5 +94,43 @@ public class TextDataController {
         response.put("data", photo);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 카테고리 이름으로 카테고리 수정 API (URL: /api/photos/{photoId})
+    @PutMapping("/api/photos/{photoId}")
+    public ResponseEntity<Map<String, Object>> updateCategoryByName(
+            @PathVariable Long photoId,
+            @RequestBody Map<String, String> request) {
+
+        String categoryName = request.get("categoryName");
+
+        if (categoryName == null || categoryName.isEmpty()) {
+            return ResponseEntity.status(400).body(Map.of(
+                    "success", "False",
+                    "message", "Category name is required"
+            ));
+        }
+
+        try {
+            // 카테고리 이름으로 카테고리 업데이트
+            TextData updatedTextData = textDataService.updateCategoryByName(photoId, categoryName);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", "True");
+            response.put("message", "Category updated successfully");
+            response.put("data", Map.of(
+                    "photoId", updatedTextData.getPhotoId(),
+                    "categoryId", updatedTextData.getCategory().getId(),
+                    "categoryName", updatedTextData.getCategory().getCategoryName()
+            ));
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of(
+                    "success", "False",
+                    "message", e.getMessage()
+            ));
+        }
     }
 }
