@@ -133,4 +133,22 @@ public class TextDataController {
             ));
         }
     }
+
+    @DeleteMapping("/api/photos/{photoId}")
+    public ResponseEntity<Map<String, Object>> deleteTextDataById(@PathVariable Long photoId) {
+        boolean isDeleted = textDataService.deleteTextDataById(photoId);
+
+        if (!isDeleted) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "success", "False",
+                    "message", "Data not found"
+            ));
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", "True");
+        response.put("message", "Data deleted successfully");
+
+        return ResponseEntity.ok(response);
+    }
 }
