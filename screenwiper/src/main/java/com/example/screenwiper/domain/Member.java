@@ -50,4 +50,7 @@ public class Member {
         this.signupDate = signupDate;
         this.enabled = true;
     }
+
+    public void setActive(boolean b) {
+    }
 }

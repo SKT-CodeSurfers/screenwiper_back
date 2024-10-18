@@ -2,6 +2,7 @@ package com.example.screenwiper.controller;
 
 import com.example.screenwiper.dto.JwtTokenResponseDto;
 import com.example.screenwiper.dto.KakaoTokenRequestDto;
+import com.example.screenwiper.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
