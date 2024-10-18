@@ -33,7 +33,7 @@ public class KakaoAuthService {
                     newMember.setNickname(kakaoProfile.getNickname());
                     newMember.setEmail(kakaoProfile.getEmail());
                     newMember.setSignupDate(LocalDate.now());
-                    newMember.setActive(true);
+                    newMember.setEnabled(true);  // 수정된 부분
                     return memberRepository.save(newMember);
                 });
 
