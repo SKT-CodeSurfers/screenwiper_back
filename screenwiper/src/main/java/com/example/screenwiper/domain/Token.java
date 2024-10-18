@@ -19,21 +19,14 @@ public class Token {
     private Long memberId;
 
     @Column(nullable = false)
-    private String accessToken;
+    private String accessToken; // 자체 JWT Access Token
 
-    // 현재 코드 문제로 임시방편
-    @Column(nullable = true)
-    private String refreshToken;
+    @Column(nullable = false)
+    private String refreshToken; // 자체 JWT Refresh Token
 
     public Token(Long memberId, String accessToken, String refreshToken) {
         this.memberId = memberId;
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken; // refreshToken도 초기화
-    }
-
-    // refreshToken이 없는 경우 기본 생성자
-    public Token(Long memberId, String accessToken) {
-        this.memberId = memberId;
-        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }

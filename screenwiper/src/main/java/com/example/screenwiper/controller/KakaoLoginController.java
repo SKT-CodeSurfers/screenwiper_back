@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.controller;
 
 import jakarta.servlet.http.HttpSession;
@@ -146,3 +147,4 @@ public class KakaoLoginController {
         }
     }
 }
+*/

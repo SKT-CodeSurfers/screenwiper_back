@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.service;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -109,3 +110,4 @@ public class KakaoService {
         return userInfo;
     }
 }
+*/
