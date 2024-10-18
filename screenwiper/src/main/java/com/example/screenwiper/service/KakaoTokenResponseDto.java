@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.service;
 
 
@@ -25,3 +26,4 @@ public class KakaoTokenResponseDto {
     @JsonProperty("scope")
     public String scope;
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.example.screenwiper.service;
 
 import com.example.screenwiper.domain.Token;
@@ -35,3 +36,4 @@ public class TokenService {
         tokenRepository.deleteByMemberId(memberId);
     }
 }
+*/
