@@ -1,5 +1,9 @@
 package com.example.screenwiper.service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -7,7 +11,9 @@ import java.util.Date;
 @Service
 public class JwtTokenProvider {
 
-    private final String secretKey = "yourSecretKey";  // 실제 비밀 키 사용
+    @Value("${jwt.secret}")
+    private String secretKey;
+
     private final long validityInMilliseconds = 3600000;  // 1시간
 
     public String createAccessToken(String email) {

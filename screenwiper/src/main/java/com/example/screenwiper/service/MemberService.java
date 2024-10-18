@@ -22,18 +22,20 @@ public class MemberService {
     }
 
     public boolean isMemberExist(Long id) {
-        Member findMember = memberRepository.findOne(id);
-        return findMember != null;
+        // findById 메소드를 사용하여 Optional<Member>를 반환
+        return memberRepository.findById(id).isPresent();
     }
 
     @Transactional(readOnly = false)
     public Member login(Long id) {
-        return memberRepository.findOne(id);
+        // findById 메소드를 사용하여 Optional<Member>를 반환
+        return memberRepository.findById(id).orElse(null);
     }
 
     @Transactional
     public boolean deleteMember(Long memberId) {
-        Member member = memberRepository.findOne(memberId);
+        // findById 메소드를 사용하여 Optional<Member>를 반환
+        Member member = memberRepository.findById(memberId).orElse(null);
         if (member != null) {
             memberRepository.delete(member);
             return true;
