@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/callback").permitAll() // 카카오 로그인 관련 허용
+                                .requestMatchers("/auth/kakao/callback").permitAll() // 카카오 로그인 관련 허용
                                 .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
                                 .requestMatchers("http://15.164.115.105:8080/analyze_images").permitAll()  // 접근 허용
                                 .requestMatchers(POST, "/api/v1/images/analyze").permitAll()
