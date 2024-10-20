@@ -44,6 +44,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' // JWT 라이브러리 추가
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 }
 
 task copySecret(type: Copy) {
