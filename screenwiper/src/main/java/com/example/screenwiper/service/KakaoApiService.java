@@ -4,11 +4,14 @@ import com.example.screenwiper.dto.KakaoProfileDto;
 import com.example.screenwiper.dto.KakaoTokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -39,14 +42,38 @@ public class KakaoApiService {
         System.out.println("Requesting Kakao user profile with Access Token: " + kakaoAccessToken);
         System.out.println("Request headers: " + headers.toString());
 
-        ResponseEntity<KakaoProfileDto> response = restTemplate.exchange(
-                KAKAO_PROFILE_URL, HttpMethod.GET, entity, KakaoProfileDto.class);
+        // 카카오 사용자 정보 요청
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                KAKAO_PROFILE_URL, HttpMethod.GET, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
 
         // 응답 코드 및 본문 로깅
         System.out.println("Response status: " + response.getStatusCode());
         System.out.println("Response body: " + response.getBody());
 
-        return response.getBody();
+        Map<String, Object> body = response.getBody();
+        KakaoProfileDto kakaoProfileDto = new KakaoProfileDto();
+
+        if (body != null) {
+            kakaoProfileDto.setId(String.valueOf(body.get("id"))); // 사용자 ID 설정
+            Map<String, Object> properties = (Map<String, Object>) body.get("properties");
+
+            if (properties != null) {
+                kakaoProfileDto.setNickname((String) properties.get("nickname")); // 사용자 닉네임 설정
+            }
+
+            Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("kakao_account");
+
+            if (kakaoAccount != null) {
+                kakaoProfileDto.setEmail((String) kakaoAccount.get("email")); // 사용자 이메일 설정
+                kakaoProfileDto.setBirthdate((String) kakaoAccount.get("birthdate")); // 사용자 생일 설정 (null 가능)
+                kakaoProfileDto.setName((String) properties.get("name")); // 사용자 이름 설정 (사용자 동의 시 제공)
+            }
+        }
+
+        // KakaoProfileDto 결과 로깅
+        System.out.println("KakaoProfileDto: " + kakaoProfileDto.toString());
+
+        return kakaoProfileDto;
     }
 
     private String getKakaoAccessToken(String authorizationCode) {
