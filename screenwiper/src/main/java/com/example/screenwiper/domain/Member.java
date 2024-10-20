@@ -32,8 +32,9 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;  // 이메일
 
-    @Column(nullable = false)
-    private LocalDate signupDate;  // 가입 날짜
+    // 가입 날짜에 기본값으로 현재 날짜를 설정
+    @Column(name = "signup_date", nullable = false)
+    private LocalDate signupDate = LocalDate.now();  // 가입 날짜 (기본값: 현재 날짜)
 
     @Column(nullable = false)
     private boolean enabled = true;  // 활동 상태 (기본값 true)
@@ -47,7 +48,7 @@ public class Member {
         this.birthdate = birthdate;
         this.nickname = nickname;
         this.email = email;
-        this.signupDate = signupDate;
+        this.signupDate = signupDate != null ? signupDate : LocalDate.now();  // 만약 signupDate가 null이면 기본값으로 현재 날짜 설정
         this.enabled = true;
     }
 }
