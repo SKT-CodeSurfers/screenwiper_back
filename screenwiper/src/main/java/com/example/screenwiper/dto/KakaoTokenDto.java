@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class KakaoTokenDto {
-    private String accessToken;  // Access Token
-    private String tokenType;    // Token Type
-    private long expiresIn;      // Token Expiration Time
-    private String refreshToken;  // Refresh Token
-    private long refreshTokenExpiresIn;  // Refresh Token Expiration Time
+    private String access_token;  // Access Token
+    private String token_type;    // Token Type
+    private long expires_in;      // Token Expiration Time
+    private String refresh_token;  // Refresh Token
+    private long refresh_token_expires_in;  // Refresh Token Expiration Time
 }
