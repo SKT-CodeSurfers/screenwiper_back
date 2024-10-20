@@ -29,11 +29,13 @@ public class KakaoAuthService {
                 .orElseGet(() -> {
                     Member newMember = new Member();
                     newMember.setName(kakaoProfile.getName());
-                    newMember.setBirthdate(LocalDate.parse(kakaoProfile.getBirthdate()));
+                    newMember.setBirthdate(kakaoProfile.getBirthdate() != null
+                            ? LocalDate.parse(kakaoProfile.getBirthdate())
+                            : null);
                     newMember.setNickname(kakaoProfile.getNickname());
                     newMember.setEmail(kakaoProfile.getEmail());
                     newMember.setSignupDate(LocalDate.now());
-                    newMember.setEnabled(true);  // 수정된 부분
+                    newMember.setEnabled(true);
                     return memberRepository.save(newMember);
                 });
 
