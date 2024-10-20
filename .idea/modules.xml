@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/screenwiper.main.iml" filepath="$PROJECT_DIR$/.idea/modules/screenwiper.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/screenwiper.test.iml" filepath="$PROJECT_DIR$/.idea/modules/screenwiper.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/screenwiper_back.iml" filepath="$PROJECT_DIR$/.idea/screenwiper_back.iml" />
     </modules>
   </component>
