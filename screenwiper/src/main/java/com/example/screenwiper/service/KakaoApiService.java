@@ -1,7 +1,7 @@
 package com.example.screenwiper.service;
 
 import com.example.screenwiper.dto.KakaoProfileDto;
-import com.example.screenwiper.dto.KakaoTokenDto; // KakaoTokenDto 클래스를 가져와야 합니다.
+import com.example.screenwiper.dto.KakaoTokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -35,8 +35,16 @@ public class KakaoApiService {
         headers.setBearerAuth(kakaoAccessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
+        // 요청 정보 로깅
+        System.out.println("Requesting Kakao user profile with Access Token: " + kakaoAccessToken);
+        System.out.println("Request headers: " + headers.toString());
+
         ResponseEntity<KakaoProfileDto> response = restTemplate.exchange(
                 KAKAO_PROFILE_URL, HttpMethod.GET, entity, KakaoProfileDto.class);
+
+        // 응답 코드 및 본문 로깅
+        System.out.println("Response status: " + response.getStatusCode());
+        System.out.println("Response body: " + response.getBody());
 
         return response.getBody();
     }
@@ -51,10 +59,19 @@ public class KakaoApiService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 요청 정보 로깅
+        System.out.println("Requesting Kakao access token with params: " + params.toString());
+        System.out.println("Request headers: " + headers.toString());
+
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
         ResponseEntity<KakaoTokenDto> response = restTemplate.exchange(
                 KAKAO_TOKEN_URL, HttpMethod.POST, entity, KakaoTokenDto.class);
+
+        // 응답 코드 및 본문 로깅
+        System.out.println("Response status: " + response.getStatusCode());
+        System.out.println("Response body: " + response.getBody());
 
         return response.getBody().getAccessToken();
     }
