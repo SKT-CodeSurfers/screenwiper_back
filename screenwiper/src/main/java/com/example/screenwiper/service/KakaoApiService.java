@@ -73,6 +73,15 @@ public class KakaoApiService {
         System.out.println("Response status: " + response.getStatusCode());
         System.out.println("Response body: " + response.getBody());
 
-        return response.getBody().getAccessToken();
+        // Access Token 로깅
+        KakaoTokenDto tokenDto = response.getBody();
+        if (tokenDto != null) {
+            String accessToken = tokenDto.getAccess_token();  // Access Token 가져오기
+            System.out.println("Access Token: " + accessToken);
+        } else {
+            System.out.println("No token received.");
+        }
+
+        return tokenDto != null ? tokenDto.getAccess_token() : null;  // Access Token 반환
     }
 }

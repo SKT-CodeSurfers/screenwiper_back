@@ -11,4 +11,5 @@ public class KakaoTokenDto {
     private long expires_in;      // Token Expiration Time
     private String refresh_token;  // Refresh Token
     private long refresh_token_expires_in;  // Refresh Token Expiration Time
+
 }
