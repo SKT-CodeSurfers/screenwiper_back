@@ -2,6 +2,7 @@ package com.example.screenwiper.controller;
 
 import com.example.screenwiper.domain.TextData;
 import com.example.screenwiper.service.TextDataService;
+import com.example.screenwiper.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +22,45 @@ public class TextDataController {
     @Autowired
     private TextDataService textDataService;
 
+    @Autowired
+    private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스라고 가정
+
     @GetMapping("/api/photos/list")
     public ResponseEntity<Map<String, Object>> getTextDataList(
+            HttpServletRequest request,  // 요청에서 토큰을 가져오기 위한 HttpServletRequest 추가
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<TextData> textDataPage = textDataService.getTextDataList(type, pageable);
+        // 1. Bearer 토큰에서 member_id 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = authorizationHeader != null && authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : null;
 
+        if (token == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", "False",
+                    "message", "Authorization token is missing"
+            ));
+        }
+
+        Long memberId;
+        try {
+            memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id를 추출하는 메서드
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", "False",
+                    "message", "Invalid token"
+            ));
+        }
+
+        // 2. 페이징 설정
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. member_id와 type에 따른 필터링된 데이터 조회
+        Page<TextData> textDataPage = textDataService.getTextDataListByMemberId(memberId, type, pageable);
+
+        // 4. 응답 데이터 구성
         Map<String, Object> response = new HashMap<>();
         response.put("success", "True");
         response.put("message", "GET LIST");
@@ -44,7 +76,7 @@ public class TextDataController {
             photo.put("list", textData.getList().stream().map(event -> {
                 Map<String, String> eventMap = new HashMap<>();
                 eventMap.put("name", event);
-                eventMap.put("date", ""); // 이 부분은 실제 이벤트 날짜로 채워야 합니다
+                eventMap.put("date", "");  // 실제 이벤트 날짜로 채워야 합니다
                 return eventMap;
             }).collect(Collectors.toList()));
             photo.put("summary", textData.getSummary());
