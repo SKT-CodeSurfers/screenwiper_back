@@ -20,11 +20,11 @@ public class TextDataService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Page<TextData> getTextDataList(String type, Pageable pageable) {
+    public Page<TextData> getTextDataListByMemberId(Long memberId, String type, Pageable pageable) {
         if (type != null && !type.isEmpty()) {
-            return textDataRepository.findByCategoryName(type, pageable);
+            return textDataRepository.findByMemberIdAndCategoryName(memberId, type, pageable);
         } else {
-            return textDataRepository.findAll(pageable);
+            return textDataRepository.findByMemberId(memberId, pageable);
         }
     }
 
