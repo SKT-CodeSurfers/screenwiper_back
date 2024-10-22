@@ -57,4 +57,33 @@ public class KakaoAuthService {
         jwtTokenResponse.setRefreshToken(refreshToken);
         return jwtTokenResponse;
     }
+
+    // Refresh Token을 사용해 새로운 Access Token 재발급
+    public JwtTokenResponseDto refreshAccessToken(String refreshToken) {
+        // 1. Refresh Token이 유효한지 검증
+        if (jwtTokenProvider.validateToken(refreshToken)) {
+            String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+
+            // 2. 유저가 존재하는지 확인
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 3. 새로운 Access Token 생성
+            String newAccessToken = jwtTokenProvider.createAccessToken(email);
+
+            // 4. 기존 토큰 업데이트
+            Token token = tokenRepository.findByMemberId(member.getId())
+                    .orElseThrow(() -> new RuntimeException("Token not found"));
+            token.setAccessToken(newAccessToken);
+            tokenRepository.save(token);
+
+            // 5. 새로운 Access Token 반환
+            JwtTokenResponseDto jwtTokenResponse = new JwtTokenResponseDto();
+            jwtTokenResponse.setAccessToken(newAccessToken);
+            jwtTokenResponse.setRefreshToken(refreshToken);
+            return jwtTokenResponse;
+        } else {
+            throw new RuntimeException("Invalid Refresh Token");
+        }
+    }
 }
