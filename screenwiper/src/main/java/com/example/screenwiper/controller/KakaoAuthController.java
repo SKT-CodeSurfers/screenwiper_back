@@ -2,6 +2,7 @@ package com.example.screenwiper.controller;
 
 import com.example.screenwiper.dto.JwtTokenResponseDto;
 import com.example.screenwiper.dto.KakaoTokenRequestDto;
+import com.example.screenwiper.dto.RefreshTokenRequestDto;
 import com.example.screenwiper.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class KakaoAuthController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<JwtTokenResponseDto> refreshToken(@RequestBody String refreshToken) {
-        JwtTokenResponseDto jwtTokenResponse = kakaoAuthService.refreshAccessToken(refreshToken);
+    public ResponseEntity<JwtTokenResponseDto> refreshToken(@RequestBody RefreshTokenRequestDto request) { // DTO로 변경
+        JwtTokenResponseDto jwtTokenResponse = kakaoAuthService.refreshAccessToken(request.getRefreshToken());
         return ResponseEntity.ok(jwtTokenResponse);
     }
 }
