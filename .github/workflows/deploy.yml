@@ -72,12 +72,11 @@ jobs:
             docker pull yusiny/screenwiper_back:${{ env.DOCKER_TAG }}
 
             # Stop & Remove existing container if exists
-            if [ $(docker ps -q -f name=screenwiper_back) ]; then
+            if [ $(docker ps -aq -f name=screenwiper_back) ]; then
               echo "🐳 Docker Stop"
-              docker stop screenwiper_back
-              sleep 3
+              docker stop screenwiper_back || true
               echo "🐳 Docker Remove"
-              docker rm screenwiper_back
+              docker rm screenwiper_back || true
             fi
             
             # Start new container
