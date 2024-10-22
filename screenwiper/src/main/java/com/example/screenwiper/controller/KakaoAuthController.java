@@ -22,4 +22,10 @@ public class KakaoAuthController {
         JwtTokenResponseDto jwtTokenResponse = kakaoAuthService.kakaoLogin(tokenRequest.getAuthorizationCode());
         return ResponseEntity.ok(jwtTokenResponse);
     }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<JwtTokenResponseDto> refreshToken(@RequestBody String refreshToken) {
+        JwtTokenResponseDto jwtTokenResponse = kakaoAuthService.refreshAccessToken(refreshToken);
+        return ResponseEntity.ok(jwtTokenResponse);
+    }
 }
