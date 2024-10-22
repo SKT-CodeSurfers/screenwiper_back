@@ -84,9 +84,9 @@ jobs:
             echo "🐳 Docker Run"
             docker run -d --name screenwiper_back \
               -p 8080:8080 \
-              --log-driver json-file \                        # 로그 드라이버 설정
-              --log-opt max-size=10m \                        # 각 로그 파일의 최대 크기 10MB로 제한
-              --log-opt max-file=3 \                          # 최대 3개의 로그 파일 유지
+              --log-driver json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
               yusiny/screenwiper_back:${{ env.DOCKER_TAG }}
             
             # Check
