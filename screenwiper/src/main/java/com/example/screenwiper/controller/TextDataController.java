@@ -23,11 +23,11 @@ public class TextDataController {
     private TextDataService textDataService;
 
     @Autowired
-    private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스라고 가정
+    private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스
 
     @GetMapping("/api/photos/list")
     public ResponseEntity<Map<String, Object>> getTextDataList(
-            HttpServletRequest request,  // 요청에서 토큰을 가져오기 위한 HttpServletRequest 추가
+            HttpServletRequest request,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -47,6 +47,7 @@ public class TextDataController {
         Long memberId;
         try {
             memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id를 추출하는 메서드
+            System.out.println("Extracted memberId: " + memberId);  // 로그로 member_id 확인
         } catch (Exception e) {
             return ResponseEntity.status(401).body(Map.of(
                     "success", "False",

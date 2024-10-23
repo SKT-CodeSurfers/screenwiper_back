@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String secretKey;
 
     public Long extractMemberId(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
-        return Long.parseLong(claims.get("member_id").toString());
+        return claims.get("member_id", Long.class);  // member_id 추출
     }
 }
