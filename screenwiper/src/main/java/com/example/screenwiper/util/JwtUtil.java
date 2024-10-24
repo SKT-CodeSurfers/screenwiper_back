@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
+
 
 @Component
 public class JwtUtil {
@@ -12,11 +14,12 @@ public class JwtUtil {
     private String secretKey;
 
     public Long extractMemberId(String token) {
-        Claims claims = null;
         System.out.println("JwtUtil - extractMemberId : START");
+        System.out.println("JWT Secret Key for Token Validation: " + secretKey);  // 로그 추가
+        Claims claims = null;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
+                    .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))  // UTF-8로 고정
                     .parseClaimsJws(token)
                     .getBody();
             Long memberId = claims.get("member_id", Long.class);
