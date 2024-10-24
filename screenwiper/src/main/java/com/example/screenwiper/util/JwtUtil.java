@@ -12,10 +12,18 @@ public class JwtUtil {
     private String secretKey;
 
     public Long extractMemberId(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("member_id", Long.class);  // member_id 추출
+        Claims claims = null;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(secretKey.getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
+            Long memberId = claims.get("member_id", Long.class);
+            System.out.println("Extracted memberId from token: " + memberId);  // 로그 출력
+            return memberId;
+        } catch (Exception e) {
+            System.err.println("Error extracting memberId from token: " + e.getMessage());  // 에러 로그 출력
+            throw e;
+        }
     }
 }
