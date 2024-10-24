@@ -13,6 +13,7 @@ public class JwtUtil {
 
     public Long extractMemberId(String token) {
         Claims claims = null;
+        System.out.println("JwtUtil - extractMemberId : START");
         try {
             claims = Jwts.parser()
                     .setSigningKey(secretKey.getBytes())
