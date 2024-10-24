@@ -15,7 +15,6 @@ public class JwtUtil {
 
     public Long extractMemberId(String token) {
         System.out.println("JwtUtil - extractMemberId : START");
-        System.out.println("JWT Secret Key for Token Validation: " + secretKey);  // 로그 추가
         Claims claims = null;
         try {
             claims = Jwts.parser()

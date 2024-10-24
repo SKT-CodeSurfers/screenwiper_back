@@ -39,9 +39,9 @@ public class KakaoAuthService {
                     return memberRepository.save(newMember);
                 });
 
-        // 3. JWT Access Token 및 Refresh Token 생성
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
+        // 3. JWT Access Token 및 Refresh Token 생성 (member_id 추가)
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getId());
 
         // 4. Token DB에 저장 (새로 생성하거나 기존 값 갱신)
         Token token = tokenRepository.findByMemberId(member.getId())
@@ -63,13 +63,14 @@ public class KakaoAuthService {
         // 1. Refresh Token이 유효한지 검증
         if (jwtTokenProvider.validateToken(refreshToken)) {
             String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+            Long memberId = jwtTokenProvider.getMemberIdFromToken(refreshToken); // member_id 추출
 
             // 2. 유저가 존재하는지 확인
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // 3. 새로운 Access Token 생성
-            String newAccessToken = jwtTokenProvider.createAccessToken(email);
+            // 3. 새로운 Access Token 생성 (member_id 추가)
+            String newAccessToken = jwtTokenProvider.createAccessToken(email, memberId);
 
             // 4. 기존 토큰 업데이트
             Token token = tokenRepository.findByMemberId(member.getId())
