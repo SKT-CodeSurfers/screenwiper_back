@@ -38,6 +38,7 @@ public class TextDataController {
                 authorizationHeader.substring(7) : null;
 
         if (token == null) {
+            System.err.println("Authorization token is missing");  // 에러 로그 출력
             return ResponseEntity.status(401).body(Map.of(
                     "success", "False",
                     "message", "Authorization token is missing"
@@ -45,10 +46,13 @@ public class TextDataController {
         }
 
         Long memberId;
+        System.out.println("TextDataController - token: " + token);
+        System.out.println("TextDataController - extractMemberId : START");
         try {
-            memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id를 추출하는 메서드
-            System.out.println("Extracted memberId: " + memberId);  // 로그로 member_id 확인
+            memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id 추출
+            System.out.println("Member ID from token: " + memberId);  // 로그로 member_id 확인
         } catch (Exception e) {
+            System.err.println("Invalid token: " + e.getMessage());  // 에러 로그 출력
             return ResponseEntity.status(401).body(Map.of(
                     "success", "False",
                     "message", "Invalid token"
