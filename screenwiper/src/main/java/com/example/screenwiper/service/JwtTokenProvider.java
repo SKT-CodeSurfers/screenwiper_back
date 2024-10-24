@@ -17,6 +17,7 @@ public class JwtTokenProvider {
     private final long validityInMilliseconds = 3600000;  // 1시간
 
     public String createAccessToken(String email) {
+        System.out.println("JWT Secret Key for Access Token: " + secretKey);  // 로그 추가
         Claims claims = Jwts.claims().setSubject(email);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
