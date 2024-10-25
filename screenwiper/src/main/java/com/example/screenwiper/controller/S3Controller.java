@@ -7,11 +7,15 @@ import com.example.screenwiper.dto.ResponseDto;
 import com.example.screenwiper.dto.ApiResponse;
 import com.example.screenwiper.dto.KakaoCoordinate;
 import com.example.screenwiper.service.KakaoMapService;
+import com.example.screenwiper.util.JwtUtil; // JwtUtil 임포트
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestHeader; // RequestHeader 임포트
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +25,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
@@ -35,10 +40,41 @@ public class S3Controller {
     private final S3Uploader s3Uploader;
     private final KakaoMapService kakaoMapService; // KakaoMapService 주입
 
+    @Autowired
+    private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스
+
     @PostMapping("/analyze")
     public ResponseEntity<ApiResponse> analyzeImages(
-            @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("memberId") Long memberId) {
+            HttpServletRequest request,
+            @RequestParam("files") List<MultipartFile> files) {
+
+        // 1. Bearer 토큰에서 member_id 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = authorizationHeader != null && authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : null;
+
+        if (token == null) {
+            System.err.println("Authorization token is missing");  // 에러 로그 출력
+            return ResponseEntity.status(401).body((ApiResponse) Map.of(
+                    "success", "False",
+                    "message", "Authorization token is missing"
+            ));
+        }
+
+        Long memberId;
+        System.out.println("TextDataController - token: " + token);
+        System.out.println("TextDataController - extractMemberId : START");
+        try {
+            memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id 추출
+            System.out.println("Member ID from token: " + memberId);  // 로그로 member_id 확인
+        } catch (Exception e) {
+            System.err.println("Invalid token: " + e.getMessage());  // 에러 로그 출력
+            return ResponseEntity.status(401).body((ApiResponse) Map.of(
+                    "success", "False",
+                    "message", "Invalid token"
+            ));
+        }
+
         try {
             // 이미지 URL을 저장할 리스트
             List<String> imageUrls = new ArrayList<>();
