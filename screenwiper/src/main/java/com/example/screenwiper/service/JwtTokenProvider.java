@@ -16,9 +16,10 @@ public class JwtTokenProvider {
 
     private final long validityInMilliseconds = 3600000;  // 1시간
 
-    public String createAccessToken(String email) {
-        System.out.println("JWT Secret Key for Access Token: " + secretKey);  // 로그 추가
+    // Access Token 생성 시 member_id 추가
+    public String createAccessToken(String email, Long memberId) {
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("member_id", memberId);  // member_id 추가
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -26,13 +27,14 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
 
-    public String createRefreshToken(String email) {
-        // refresh 토큰은 더 긴 유효 기간을 가짐
+    // Refresh Token 생성 시 member_id 추가
+    public String createRefreshToken(String email, Long memberId) {
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("member_id", memberId);  // member_id 추가
         Date now = new Date();
         Date validity = new Date(now.getTime() + (validityInMilliseconds * 24 * 7));  // 7일간 유효
 
@@ -40,14 +42,14 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
 
     // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -56,7 +58,13 @@ public class JwtTokenProvider {
 
     // 토큰에서 이메일 추출
     public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
         return claims.getSubject();
+    }
+
+    // 토큰에서 member_id 추출
+    public Long getMemberIdFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
+        return claims.get("member_id", Long.class);
     }
 }
