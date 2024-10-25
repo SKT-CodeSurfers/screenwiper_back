@@ -46,7 +46,6 @@ public class TextDataController {
         }
 
         Long memberId;
-        System.out.println("TextDataController - token: " + token);
         System.out.println("TextDataController - extractMemberId : START");
         try {
             memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id 추출

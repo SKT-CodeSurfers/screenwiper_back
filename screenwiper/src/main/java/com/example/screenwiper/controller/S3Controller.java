@@ -62,8 +62,7 @@ public class S3Controller {
         }
 
         Long memberId;
-        System.out.println("TextDataController - token: " + token);
-        System.out.println("TextDataController - extractMemberId : START");
+        System.out.println("S3Controller - extractMemberId : START");
         try {
             memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id 추출
             System.out.println("Member ID from token: " + memberId);  // 로그로 member_id 확인
