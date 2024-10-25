@@ -62,23 +62,24 @@ public class KakaoAuthService {
     public JwtTokenResponseDto refreshAccessToken(String refreshToken) {
         // 1. Refresh Token이 유효한지 검증
         if (jwtTokenProvider.validateToken(refreshToken)) {
+            // 2. Refresh Token에서 이메일 추출
             String email = jwtTokenProvider.getEmailFromToken(refreshToken);
-            Long memberId = jwtTokenProvider.getMemberIdFromToken(refreshToken); // member_id 추출
+            // Long memberId = jwtTokenProvider.getMemberIdFromToken(refreshToken); // member_id 추출
 
-            // 2. 유저가 존재하는지 확인
+            // 3. 이메일로 사용자 조회
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // 3. 새로운 Access Token 생성 (member_id 추가)
-            String newAccessToken = jwtTokenProvider.createAccessToken(email, memberId);
+            // 4. 새로운 Access Token 생성
+            String newAccessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getId());
 
-            // 4. 기존 토큰 업데이트
+            // 5. 기존 토큰 업데이트
             Token token = tokenRepository.findByMemberId(member.getId())
                     .orElseThrow(() -> new RuntimeException("Token not found"));
             token.setAccessToken(newAccessToken);
             tokenRepository.save(token);
 
-            // 5. 새로운 Access Token 반환
+            // 6. 새로운 Access Token 반환
             JwtTokenResponseDto jwtTokenResponse = new JwtTokenResponseDto();
             jwtTokenResponse.setAccessToken(newAccessToken);
             jwtTokenResponse.setRefreshToken(refreshToken);
