@@ -25,7 +25,6 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/auth/token/refresh").permitAll() // 리프레시 토큰 재발급 허용
                                 .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
                                 .requestMatchers("http://43.200.186.148:3000/analyze_images").permitAll()  // 접근 허용
-                                .requestMatchers(POST, "/api/v1/images/analyze").permitAll()
                                 .requestMatchers(GET, "/api/photos/{photoId}").permitAll()   // GET 요청 허용
                                 .requestMatchers(PUT, "/api/photos/{photoId}").permitAll()   // PUT 요청 허용
                                 .requestMatchers(DELETE, "/api/photos/{photoId}").permitAll() // DELETE 요청 허용
