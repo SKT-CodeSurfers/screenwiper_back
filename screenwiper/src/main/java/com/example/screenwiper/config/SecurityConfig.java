@@ -24,7 +24,7 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "/auth/kakao/login").permitAll()  // 카카오 로그인 API 허용 (POST)
                                 .requestMatchers(POST, "/auth/token/refresh").permitAll() // 리프레시 토큰 재발급 허용
                                 .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
-                                .requestMatchers("http://15.164.115.105:8080/analyze_images").permitAll()  // 접근 허용
+                                .requestMatchers("http://43.200.186.148:3000/analyze_images").permitAll()  // 접근 허용
                                 .requestMatchers(POST, "/api/v1/images/analyze").permitAll()
                                 .requestMatchers(GET, "/api/photos/{photoId}").permitAll()   // GET 요청 허용
                                 .requestMatchers(PUT, "/api/photos/{photoId}").permitAll()   // PUT 요청 허용
@@ -41,7 +41,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://3.34.88.174:8080",  // 허용할 클라이언트 출처 추가
-                "http://15.164.115.105:8080"
+                "http://43.200.186.148:3000"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // 허용할 HTTP 메서드
         configuration.setAllowCredentials(true); //자격증명 허용 코드 (필요에 따라 지워도 괜찮음)
