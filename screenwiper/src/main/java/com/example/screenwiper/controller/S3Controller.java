@@ -46,33 +46,25 @@ public class S3Controller {
 
     @PostMapping("/analyze")
     public ResponseEntity<ApiResponse> analyzeImages(
-            HttpServletRequest request,
+            @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("files") List<MultipartFile> files) {
 
         // 1. Bearer 토큰에서 member_id 추출
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = authorizationHeader != null && authorizationHeader.startsWith("Bearer ") ?
-                authorizationHeader.substring(7) : null;
-
-        if (token == null) {
-            System.err.println("Authorization token is missing");  // 에러 로그 출력
-            return ResponseEntity.status(401).body((ApiResponse) Map.of(
-                    "success", "False",
-                    "message", "Authorization token is missing"
-            ));
+        // 토큰에서 member_id 추출
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            log.error("Authorization token is missing");
+            return ResponseEntity.status(401).body(new ApiResponse(false, "Authorization token is missing", null));
         }
 
+        String token = authorizationHeader.substring(7);
         Long memberId;
         System.out.println("S3Controller - extractMemberId : START");
         try {
             memberId = jwtUtil.extractMemberId(token);  // 토큰에서 member_id 추출
             System.out.println("Member ID from token: " + memberId);  // 로그로 member_id 확인
         } catch (Exception e) {
-            System.err.println("Invalid token: " + e.getMessage());  // 에러 로그 출력
-            return ResponseEntity.status(401).body((ApiResponse) Map.of(
-                    "success", "False",
-                    "message", "Invalid token"
-            ));
+            log.error("Invalid token: " + e.getMessage());
+            return ResponseEntity.status(401).body(new ApiResponse(false, "Invalid token", null));
         }
 
         try {
