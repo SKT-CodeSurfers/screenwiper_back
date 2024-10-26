@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestHeader; // RequestHeader 임포트
@@ -149,7 +150,12 @@ public class S3Controller {
     // MultipartFile을 File로 변환하는 헬퍼 메서드
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {
         File convertedFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
-        file.transferTo(convertedFile);
+        try {
+            file.transferTo(convertedFile);
+        } catch (IOException e) {
+            log.error("Failed to convert MultipartFile to File", e);
+            throw e;
+        }
         return convertedFile;
     }
 }
