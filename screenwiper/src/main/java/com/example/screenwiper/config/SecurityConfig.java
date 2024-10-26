@@ -18,12 +18,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/auth/kakao/callback").permitAll() // 카카오 로그인 콜백 경로 허용
                                 .requestMatchers(POST, "/auth/kakao/login").permitAll()  // 카카오 로그인 API 허용 (POST)
                                 .requestMatchers(POST, "/auth/token/refresh").permitAll() // 리프레시 토큰 재발급 허용
                                 .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
+                                .requestMatchers(POST, "/api/v1/images/analyze").permitAll()  // 추가: analyze_images 허용
                                 .requestMatchers("http://43.200.186.148:3000/analyze_images").permitAll()  // 접근 허용
                                 .requestMatchers(GET, "/api/photos/{photoId}").permitAll()   // GET 요청 허용
                                 .requestMatchers(PUT, "/api/photos/{photoId}").permitAll()   // PUT 요청 허용
