@@ -1,14 +1,13 @@
 package com.example.screenwiper.controller;
 
-import com.example.screenwiper.dto.ApiResponse;
 import com.example.screenwiper.dto.MemberDto;
+import com.example.screenwiper.dto.MemberResponseDto;
 import com.example.screenwiper.service.MemberService;
 import com.example.screenwiper.util.JwtUtil;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/members")
@@ -23,7 +22,7 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse> getMemberInfo(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<MemberResponseDto> getMemberInfo(@RequestHeader("Authorization") String token) {
         // Bearer에서 실제 token 추출
         String accessToken = token.replace("Bearer ", "");
 
@@ -33,8 +32,8 @@ public class MemberController {
         // member 정보를 가져옴
         MemberDto memberDto = memberService.getMemberById(memberId);
 
-        // ApiResponse 반환
-        ApiResponse response = new ApiResponse(true, "회원 정보 조회 성공", List.of(memberDto));
+        // MemberResponseDto 반환
+        MemberResponseDto response = new MemberResponseDto(true, "회원 정보 조회 성공", Collections.singletonList(memberDto));
         return ResponseEntity.ok(response);
     }
 }
