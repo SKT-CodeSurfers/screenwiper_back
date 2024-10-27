@@ -8,6 +8,7 @@ import com.example.screenwiper.dto.ApiResponse;
 import com.example.screenwiper.dto.KakaoCoordinate;
 import com.example.screenwiper.service.KakaoMapService;
 import com.example.screenwiper.util.JwtUtil; // JwtUtil 임포트
+import com.fasterxml.jackson.databind.ObjectMapper; // ObjectMapper 임포트
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
-
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/images")
@@ -43,6 +42,8 @@ public class S3Controller {
 
     @Autowired
     private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스
+
+    private final ObjectMapper objectMapper; // ObjectMapper 주입
 
     @PostMapping("/analyze")
     public ResponseEntity<ApiResponse> analyzeImages(
@@ -83,12 +84,12 @@ public class S3Controller {
                 localFile.delete();
             }
 
-            // AI 모델에 전송하여 분석
-            // List<ResponseDto> responseList = s3Uploader.processImagesAndSaveResults(imageUrls, memberId);
-
             // AI 모델에 전송하여 분석 결과 받기
             AIAnalysisResponseWrapperDto aiResponseWrapper = s3Uploader.sendS3FileToAImodel(imageUrls);
-            System.out.println("S3Controller - aiResponseWrapper : response: " + aiResponseWrapper);
+
+            // aiResponseWrapper의 데이터를 JSON 형식으로 출력
+            String jsonResponse = objectMapper.writeValueAsString(aiResponseWrapper.getData());
+            System.out.println("S3Controller - aiResponseWrapper : response: " + jsonResponse);
             System.out.println("S3Controller memberId : " + memberId);
 
             // 데이터베이스에 결과 저장

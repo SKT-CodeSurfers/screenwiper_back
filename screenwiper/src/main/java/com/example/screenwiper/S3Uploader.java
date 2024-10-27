@@ -129,15 +129,19 @@ public class S3Uploader {
                     // Member 및 Category를 조회하고 설정합니다.
                     System.out.println("s3Uploader saveTextData memberId : " + memberId);
                     Optional<Member> memberOptional = memberRepository.findById(memberId);
+                    System.out.println("s3Uploader saveTextData memberId2 : " + memberId);
                     Member member = memberOptional.orElseThrow(() -> new RuntimeException("Member not found"));
                     textData.setMember(member);
+                    System.out.println("s3Uploader saveTextData memberId3 : " + memberId);
 
                     Optional<Category> categoryOptional = categoryRepository.findById(aiResponse.getCategoryId());
                     Category category = categoryOptional.orElseThrow(() -> new RuntimeException("Category not found"));
                     textData.setCategory(category);
+                    System.out.println("s3Uploader saveTextData textData : " + textData);
 
                     // Category의 이름을 가져와 categoryName 필드에 설정
                     textData.setCategoryName(category.getCategoryName());
+                    System.out.println("s3Uploader saveTextData textData2 : " + textData);
 
                     // 외래키는 그대로 두고 문자열 필드만 처리합니다.
                     textData.setTitle(aiResponse.getTitle() != null ? aiResponse.getTitle() : "");
