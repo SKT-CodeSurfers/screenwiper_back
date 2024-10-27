@@ -24,6 +24,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/auth/kakao/callback").permitAll() // 카카오 로그인 콜백 경로 허용
                                 .requestMatchers(POST, "/api/auth/kakao/login").permitAll()  // 카카오 로그인 API 허용 (POST)
                                 .requestMatchers(POST, "/api/auth/token/refresh").permitAll() // 리프레시 토큰 재발급 허용
+                                .requestMatchers(GET, "/api/members/me").permitAll() // 홈 유저 정보 조회 허용
                                 .requestMatchers("/api/login-url", "/api/callback", "/api/member-info").permitAll()  // 인증 없이 접근 가능
                                 .requestMatchers(POST, "/api/v1/images/analyze").permitAll()  // 추가: analyze_images 허용
                                 .requestMatchers("http://43.200.186.148:3000/analyze_images").permitAll()  // 접근 허용
