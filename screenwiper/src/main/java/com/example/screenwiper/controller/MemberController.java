@@ -34,7 +34,7 @@ public class MemberController {
         MemberDto memberDto = memberService.getMemberById(memberId);
 
         // ApiResponse 반환
-        ApiResponse response = new ApiResponse(true, "회원 정보 조회 성공", List.of());
+        ApiResponse response = new ApiResponse(true, "회원 정보 조회 성공", List.of(memberDto));
         return ResponseEntity.ok(response);
     }
 }
