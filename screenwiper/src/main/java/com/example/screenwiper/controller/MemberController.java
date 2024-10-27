@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/members")
 public class MemberController {
@@ -32,7 +34,7 @@ public class MemberController {
         MemberDto memberDto = memberService.getMemberById(memberId);
 
         // ApiResponse 반환
-        ApiResponse response = new ApiResponse(true, "회원 정보 조회 성공", List.of(memberDto));
+        ApiResponse response = new ApiResponse(true, "회원 정보 조회 성공", List.of());
         return ResponseEntity.ok(response);
     }
 }
