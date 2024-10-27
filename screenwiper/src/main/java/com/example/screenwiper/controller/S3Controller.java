@@ -88,9 +88,12 @@ public class S3Controller {
 
             // AI 모델에 전송하여 분석 결과 받기
             AIAnalysisResponseWrapperDto aiResponseWrapper = s3Uploader.sendS3FileToAImodel(imageUrls);
+            System.out.println("S3Controller - aiResponseWrapper : response: " + aiResponseWrapper);
+            System.out.println("S3Controller memberId : " + memberId);
 
             // 데이터베이스에 결과 저장
             List<TextData> savedTextDataList = s3Uploader.saveTextData(memberId, aiResponseWrapper);
+            System.out.println("S3Controller - savedTextDataList " + savedTextDataList);
 
             // 카카오 맵 API 코드 x, y 가져오기
             // KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(savedTextDataList.getFirst().getAddress());

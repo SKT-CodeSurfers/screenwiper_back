@@ -127,6 +127,7 @@ public class S3Uploader {
                     TextData textData = new TextData();
 
                     // Member 및 Category를 조회하고 설정합니다.
+                    System.out.println("s3Uploader saveTextData memberId : " + memberId);
                     Optional<Member> memberOptional = memberRepository.findById(memberId);
                     Member member = memberOptional.orElseThrow(() -> new RuntimeException("Member not found"));
                     textData.setMember(member);
