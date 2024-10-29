@@ -1,8 +1,11 @@
 package com.example.screenwiper.controller;
 
 import com.example.screenwiper.domain.TextData;
+import com.example.screenwiper.dto.KakaoCoordinate;
 import com.example.screenwiper.service.TextDataService;
+import com.example.screenwiper.service.KakaoMapService;
 import com.example.screenwiper.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 public class TextDataController {
 
@@ -24,6 +28,9 @@ public class TextDataController {
 
     @Autowired
     private JwtUtil jwtUtil;  // JwtUtil 클래스는 토큰에서 정보를 추출하는 유틸리티 클래스
+
+    @Autowired
+    private KakaoMapService kakaoMapService;
 
     @GetMapping("/api/photos/list")
     public ResponseEntity<Map<String, Object>> getTextDataList(
@@ -125,6 +132,16 @@ public class TextDataController {
         photo.put("photoName", textData.getPhotoName());
         photo.put("photoUrl", textData.getPhotoUrl());
         photo.put("date", textData.getDate());
+        // 주소를 이용해 좌표 가져오기
+        try {
+            KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
+            photo.put("xcoordinate", String.valueOf(coordinate.getX())); // double을 String으로 변환
+            photo.put("ycoordinate", String.valueOf(coordinate.getY())); // double을 String으로 변환
+        } catch (Exception e) {
+            log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
+            photo.put("xcoordinate", null); // 좌표를 찾지 못한 경우 null 처리
+            photo.put("ycoordinate", null);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", "True");
