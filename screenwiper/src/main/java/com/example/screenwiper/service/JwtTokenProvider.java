@@ -14,7 +14,7 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long validityInMilliseconds = 3600000;  // 1시간
+    private final long validityInMilliseconds = 86400000;  // 24시간
 
     // Access Token 생성 시 member_id 추가
     public String createAccessToken(String email, Long memberId) {
@@ -36,7 +36,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("member_id", memberId);  // member_id 추가
         Date now = new Date();
-        Date validity = new Date(now.getTime() + (validityInMilliseconds * 24 * 7));  // 7일간 유효
+        Date validity = new Date(now.getTime() + (validityInMilliseconds * 7));  // 7일간 유효
 
         return Jwts.builder()
                 .setClaims(claims)
