@@ -30,6 +30,7 @@ public class SecurityConfig {
                                 .requestMatchers(GET, "/api/photos/{photoId}").permitAll()   // GET 요청 허용
                                 .requestMatchers(PUT, "/api/photos/{photoId}").permitAll()   // PUT 요청 허용
                                 .requestMatchers(DELETE, "/api/photos/{photoId}").permitAll() // DELETE 요청 허용
+                                .requestMatchers(GET, "/api/recommend/random").permitAll() //홈화면 자동추천 허용
                                 .anyRequest().authenticated()  // 다른 모든 요청은 인증 필요
                 )
                 .csrf(csrf -> csrf.disable());  // CSRF 비활성화 (필요에 따라 설정)

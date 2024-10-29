@@ -40,4 +40,8 @@ public class TextData {
     private String photoUrl;
     private String date;
 
+    public Long getCategoryId() {
+        return category != null ? category.getId() : null; // Category 객체가 null이 아닌 경우 ID 반환
+    }
+
 }
