@@ -127,7 +127,12 @@ public class TextDataController {
         photo.put("title", textData.getTitle());
         photo.put("address", textData.getAddress());
         photo.put("operatingHours", textData.getOperatingHours());
-        photo.put("list", textData.getList());
+        photo.put("list", textData.getList().stream().map(event -> {
+            Map<String, String> eventMap = new HashMap<>();
+            eventMap.put("name", event);
+            eventMap.put("date", "");  // 실제 이벤트 날짜로 채워야 합니다
+            return eventMap;
+        }).collect(Collectors.toList()));
         photo.put("summary", textData.getSummary());
         photo.put("photoName", textData.getPhotoName());
         photo.put("photoUrl", textData.getPhotoUrl());
