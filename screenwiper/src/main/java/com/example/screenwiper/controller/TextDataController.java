@@ -72,8 +72,9 @@ public class TextDataController {
         List<Map<String, Object>> photos = textDataPage.getContent().stream().map(textData -> {
             Map<String, Object> photo = new HashMap<>();
             photo.put("photoId", textData.getPhotoId());
-            photo.put("userId", textData.getMember() != null ? textData.getMember().getId() : null);
+            photo.put("memberId", textData.getMember() != null ? textData.getMember().getId() : null);
             photo.put("categoryId", textData.getCategory() != null ? textData.getCategory().getId() : null);
+            photo.put("categoryName", textData.getCategoryName());
             photo.put("title", textData.getTitle());
             photo.put("address", textData.getAddress());
             photo.put("operatingHours", textData.getOperatingHours());
@@ -113,8 +114,9 @@ public class TextDataController {
 
         Map<String, Object> photo = new HashMap<>();
         photo.put("photoId", textData.getPhotoId());
-        photo.put("userId", textData.getMember() != null ? textData.getMember().getId() : null);
+        photo.put("memberId", textData.getMember() != null ? textData.getMember().getId() : null);
         photo.put("categoryId", textData.getCategory() != null ? textData.getCategory().getId() : null);
+        photo.put("categoryName", textData.getCategoryName());
         photo.put("title", textData.getTitle());
         photo.put("address", textData.getAddress());
         photo.put("operatingHours", textData.getOperatingHours());
