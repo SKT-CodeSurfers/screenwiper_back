@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.screenwiper.domain.Category;
+import com.example.screenwiper.domain.Event;
 import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.domain.TextData;
 import com.example.screenwiper.dto.AIAnalysisResponseWrapperDto;
@@ -140,13 +141,19 @@ public class S3Uploader {
                     textData.setTitle(aiResponse.getTitle() != null ? aiResponse.getTitle() : "");
                     textData.setAddress(aiResponse.getAddress() != null ? aiResponse.getAddress() : "");
                     textData.setOperatingHours(aiResponse.getOperatingHours() != null ? String.join(", ", aiResponse.getOperatingHours()) : "");
-                    textData.setList(aiResponse.getList() != null ? aiResponse.getList().stream()
-                            .map(event -> event.getName() != null ? event.getName() + ": " + (event.getDate() != null ? event.getDate() : "") : "")
-                            .collect(Collectors.toList()) : Collections.emptyList());
                     textData.setSummary(aiResponse.getSummary() != null ? aiResponse.getSummary() : "");
                     textData.setPhotoName(aiResponse.getPhotoName() != null ? aiResponse.getPhotoName() : "");
                     textData.setPhotoUrl(aiResponse.getPhotoUrl() != null ? aiResponse.getPhotoUrl() : "");
                     textData.setDate(String.valueOf(LocalDateTime.now()));
+                    // 이벤트 리스트를 Event 객체 리스트로 변환
+                    if (aiResponse.getList() != null) {
+                        List<Event> events = aiResponse.getList().stream()
+                                .map(eventDto -> new Event(eventDto.getName(), eventDto.getDate()))
+                                .collect(Collectors.toList());
+                        textData.setList(events);
+                    } else {
+                        textData.setList(Collections.emptyList());
+                    }
 
                     return textData;
                 })
