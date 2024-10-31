@@ -30,8 +30,7 @@ public class TextData {
 
     @ElementCollection
     @CollectionTable(name = "event", joinColumns = @JoinColumn(name = "textdata_id"))
-    @Column(name = "event")
-    private List<String> list;
+    private List<Event> list;
 
     @Column(columnDefinition = "TEXT")
     private String summary;

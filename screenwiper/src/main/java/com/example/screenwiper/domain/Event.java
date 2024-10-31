@@ -1,10 +1,14 @@
 package com.example.screenwiper.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Event {
+    @Column(name = "event_name") // 컬럼 이름 명시
     private String name;
+
+    @Column(name = "event_date") // 컬럼 이름 명시
     private String date;
 
     // 기본 생성자
