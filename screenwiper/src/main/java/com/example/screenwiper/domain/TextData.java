@@ -35,7 +35,9 @@ public class TextData {
     @Column(name = "event")
     private List<String> list;
 
+    @Column(columnDefinition = "TEXT")
     private String summary;
+
     private String photoName;
     private String photoUrl;
     private String date;
