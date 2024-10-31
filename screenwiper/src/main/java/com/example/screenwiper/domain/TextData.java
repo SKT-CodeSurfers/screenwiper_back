@@ -1,7 +1,5 @@
 package com.example.screenwiper.domain;
 
-import com.example.screenwiper.domain.Member;
-import com.example.screenwiper.domain.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -31,11 +29,12 @@ public class TextData {
     private String operatingHours;
 
     @ElementCollection
-    @CollectionTable(name = "event_list", joinColumns = @JoinColumn(name = "text_data_id"))
-    @Column(name = "event")
-    private List<String> list;
+    @CollectionTable(name = "event", joinColumns = @JoinColumn(name = "textdata_id"))
+    private List<Event> list;
 
+    @Column(columnDefinition = "TEXT")
     private String summary;
+
     private String photoName;
     private String photoUrl;
     private String date;

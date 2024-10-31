@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.screenwiper.domain.Category;
+import com.example.screenwiper.domain.Event;
 import com.example.screenwiper.domain.Member;
 import com.example.screenwiper.domain.TextData;
 import com.example.screenwiper.dto.AIAnalysisResponseWrapperDto;
@@ -126,34 +127,33 @@ public class S3Uploader {
                 .map(aiResponse -> {
                     TextData textData = new TextData();
 
-                    // Member 및 Category를 조회하고 설정합니다.
-                    System.out.println("s3Uploader saveTextData memberId : " + memberId);
-                    Optional<Member> memberOptional = memberRepository.findById(memberId);
-                    System.out.println("s3Uploader saveTextData memberId2 : " + memberId);
-                    Member member = memberOptional.orElseThrow(() -> new RuntimeException("Member not found"));
+                    // Member와 Category 설정
+                    Member member = memberRepository.findById(memberId)
+                            .orElseThrow(() -> new RuntimeException("Member not found"));
                     textData.setMember(member);
-                    System.out.println("s3Uploader saveTextData memberId3 : " + memberId);
 
-                    Optional<Category> categoryOptional = categoryRepository.findById(aiResponse.getCategoryId());
-                    Category category = categoryOptional.orElseThrow(() -> new RuntimeException("Category not found"));
+                    Category category = categoryRepository.findById(aiResponse.getCategoryId())
+                            .orElseThrow(() -> new RuntimeException("Category not found"));
                     textData.setCategory(category);
-                    System.out.println("s3Uploader saveTextData textData : " + textData);
-
-                    // Category의 이름을 가져와 categoryName 필드에 설정
                     textData.setCategoryName(category.getCategoryName());
-                    System.out.println("s3Uploader saveTextData textData2 : " + textData);
 
                     // 외래키는 그대로 두고 문자열 필드만 처리합니다.
                     textData.setTitle(aiResponse.getTitle() != null ? aiResponse.getTitle() : "");
                     textData.setAddress(aiResponse.getAddress() != null ? aiResponse.getAddress() : "");
                     textData.setOperatingHours(aiResponse.getOperatingHours() != null ? String.join(", ", aiResponse.getOperatingHours()) : "");
-                    textData.setList(aiResponse.getList() != null ? aiResponse.getList().stream()
-                            .map(event -> event.getName() != null ? event.getName() + ": " + (event.getDate() != null ? event.getDate() : "") : "")
-                            .collect(Collectors.toList()) : Collections.emptyList());
                     textData.setSummary(aiResponse.getSummary() != null ? aiResponse.getSummary() : "");
                     textData.setPhotoName(aiResponse.getPhotoName() != null ? aiResponse.getPhotoName() : "");
                     textData.setPhotoUrl(aiResponse.getPhotoUrl() != null ? aiResponse.getPhotoUrl() : "");
                     textData.setDate(String.valueOf(LocalDateTime.now()));
+                    // 이벤트 리스트를 Event 객체 리스트로 변환
+                    if (aiResponse.getList() != null) {
+                        List<Event> events = aiResponse.getList().stream()
+                                .map(eventDto -> new Event(eventDto.getName(), eventDto.getDate()))
+                                .collect(Collectors.toList());
+                        textData.setList(events);
+                    } else {
+                        textData.setList(Collections.emptyList());
+                    }
 
                     return textData;
                 })

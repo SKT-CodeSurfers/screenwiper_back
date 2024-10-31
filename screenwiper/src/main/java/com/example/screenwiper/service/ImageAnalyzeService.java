@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.example.screenwiper.domain.Event;
 import com.example.screenwiper.dto.*;
 import com.example.screenwiper.domain.Category;
 import com.example.screenwiper.domain.Member;
@@ -320,9 +321,15 @@ public class ImageAnalyzeService {
         textData.setTitle(aiResponse.getTitle());
         textData.setAddress(aiResponse.getAddress());
         textData.setOperatingHours(aiResponse.getOperatingHours().toString());
-        textData.setList(aiResponse.getList().stream()
-                .map(event -> event.getName() + ": " + event.getDate())
-                .collect(Collectors.toList()));
+        // 이벤트 리스트를 Event 객체 리스트로 변환
+        if (aiResponse.getList() != null) {
+            List<Event> events = aiResponse.getList().stream()
+                    .map(eventDto -> new Event(eventDto.getName(), eventDto.getDate()))
+                    .collect(Collectors.toList());
+            textData.setList(events);
+        } else {
+            textData.setList(Collections.emptyList());
+        }
         textData.setSummary(aiResponse.getSummary());
         textData.setPhotoName(photoName);
         textData.setPhotoUrl(photoUrl);

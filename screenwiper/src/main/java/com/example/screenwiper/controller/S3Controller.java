@@ -2,6 +2,7 @@ package com.example.screenwiper.controller;
 
 import com.example.screenwiper.S3Uploader;
 import com.example.screenwiper.domain.TextData;
+import com.example.screenwiper.dto.AIAnalysisResponseDto;
 import com.example.screenwiper.dto.AIAnalysisResponseWrapperDto;
 import com.example.screenwiper.dto.ResponseDto;
 import com.example.screenwiper.dto.ApiResponse;
@@ -112,7 +113,20 @@ public class S3Controller {
                         responseDto.setTitle(textData.getTitle());
                         responseDto.setAddress(textData.getAddress());
                         responseDto.setOperatingHours(textData.getOperatingHours());
-                        responseDto.setList(textData.getList() != null ? textData.getList() : Collections.emptyList());
+
+                        // textData.getList()를 ResponseDto의 list 타입에 맞게 변환
+                        List<AIAnalysisResponseDto.Event> eventList = textData.getList() != null ?
+                                textData.getList().stream()
+                                        .map(event -> {
+                                            AIAnalysisResponseDto.Event aiEvent = new AIAnalysisResponseDto.Event();
+                                            aiEvent.setName(event.getName());
+                                            aiEvent.setDate(event.getDate());
+                                            return aiEvent;
+                                        })
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList();
+                        responseDto.setList(eventList);
+
                         responseDto.setSummary(textData.getSummary());
                         responseDto.setPhotoName(textData.getPhotoName());
                         responseDto.setPhotoUrl(textData.getPhotoUrl());

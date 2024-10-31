@@ -15,7 +15,7 @@ public class ResponseDto {
     private String title;
     private String address;
     private String operatingHours;
-    private List<AIAnalysisResponseDto.Event> list;
+    private List<AIAnalysisResponseDto.Event> list; // List<Event>로 유지
     private String summary;
     private String photoName;
     private String photoUrl;
@@ -33,27 +33,34 @@ public class ResponseDto {
         this.title = aiResponse.getTitle();
         this.address = aiResponse.getAddress();
         this.operatingHours = aiResponse.getOperatingHours().toString();
-        this.list = aiResponse.getList();
+        this.list = aiResponse.getList(); // list를 AIAnalysisResponseDto에서 가져옴
         this.summary = aiResponse.getSummary();
         this.photoName = aiResponse.getPhotoName();
         this.photoUrl = aiResponse.getPhotoUrl();
         // `date` will be set in the controller
     }
 
-    // List<String>을 List<AIAnalysisResponseDto.Event>로 변환할 수 있는 메서드
-    public void setList(List<String> list) {
+    // List<AIAnalysisResponseDto.Event>을 List<String>으로 변환하는 메서드 추가
+    public void setList(List<AIAnalysisResponseDto.Event> list) {
         if (list == null) {
-            this.list = Collections.emptyList(); // 혹은 null로 설정
+            this.list = Collections.emptyList();
         } else {
-            this.list = list.stream()
-                    .map(str -> {
+            this.list = list; // List<Event>로 직접 설정
+        }
+    }
+
+    // List<String>을 List<AIAnalysisResponseDto.Event>로 변환하는 메서드 추가
+    public void setListFromStrings(List<String> eventNames) {
+        if (eventNames == null) {
+            this.list = Collections.emptyList();
+        } else {
+            this.list = eventNames.stream()
+                    .map(name -> {
                         AIAnalysisResponseDto.Event event = new AIAnalysisResponseDto.Event();
-                        // 변환 로직 작성, 예를 들어:
-                        // event.setName(str);
+                        event.setName(name); // Event 클래스에서 name 속성이 있다고 가정
                         return event;
                     })
                     .collect(Collectors.toList());
         }
     }
-
 }
