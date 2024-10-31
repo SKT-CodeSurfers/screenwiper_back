@@ -1,41 +1,22 @@
 package com.example.screenwiper.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 
-@Entity
-@Table(name = "event")
+@Embeddable
 public class Event {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name; // 이벤트 이름
-
-    private String date; // 이벤트 날짜 (String으로 변경)
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "text_data_id")
-    private TextData textData; // 관련 TextData 엔티티
+    private String name;
+    private String date;
 
     // 기본 생성자
     public Event() {}
 
     // 생성자
-    public Event(String name, String date) { // 생성자에서 date 타입도 String으로 변경
+    public Event(String name, String date) {
         this.name = name;
         this.date = date;
     }
 
-    // Getter 및 Setter
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // getters 및 setters
     public String getName() {
         return name;
     }
@@ -44,19 +25,11 @@ public class Event {
         this.name = name;
     }
 
-    public String getDate() { // Getter도 String 타입으로 변경
+    public String getDate() {
         return date;
     }
 
-    public void setDate(String date) { // Setter도 String 타입으로 변경
+    public void setDate(String date) {
         this.date = date;
-    }
-
-    public TextData getTextData() {
-        return textData;
-    }
-
-    public void setTextData(TextData textData) {
-        this.textData = textData;
     }
 }

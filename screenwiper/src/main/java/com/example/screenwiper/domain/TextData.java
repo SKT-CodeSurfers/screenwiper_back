@@ -29,7 +29,7 @@ public class TextData {
     private String operatingHours;
 
     @ElementCollection
-    @CollectionTable(name = "event", joinColumns = @JoinColumn(name = "text_data_id"))
+    @CollectionTable(name = "event", joinColumns = @JoinColumn(name = "textdata_id"))
     @Column(name = "event")
     private List<String> list;
 
