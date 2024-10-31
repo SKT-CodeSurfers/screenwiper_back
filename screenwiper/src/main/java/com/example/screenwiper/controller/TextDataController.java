@@ -137,15 +137,17 @@ public class TextDataController {
         photo.put("photoName", textData.getPhotoName());
         photo.put("photoUrl", textData.getPhotoUrl());
         photo.put("date", textData.getDate());
-        // 주소를 이용해 좌표 가져오기
-        try {
-            KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
-            photo.put("xcoordinate", String.valueOf(coordinate.getX())); // double을 String으로 변환
-            photo.put("ycoordinate", String.valueOf(coordinate.getY())); // double을 String으로 변환
-        } catch (Exception e) {
-            log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
-            photo.put("xcoordinate", null); // 좌표를 찾지 못한 경우 null 처리
-            photo.put("ycoordinate", null);
+        // 주소가 null이 아닌 경우에만 좌표 조회 로직 실행
+        if (textData.getAddress() != null && !textData.getAddress().isEmpty()) {
+            try {
+                KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
+                photo.put("xcoordinate", String.valueOf(coordinate.getX())); // double을 String으로 변환
+                photo.put("ycoordinate", String.valueOf(coordinate.getY())); // double을 String으로 변환
+            } catch (Exception e) {
+                log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
+                photo.put("xcoordinate", null); // 좌표를 찾지 못한 경우 null 처리
+                photo.put("ycoordinate", null);
+            }
         }
 
         Map<String, Object> response = new HashMap<>();

@@ -116,16 +116,21 @@ public class S3Controller {
                         responseDto.setSummary(textData.getSummary());
                         responseDto.setPhotoName(textData.getPhotoName());
                         responseDto.setPhotoUrl(textData.getPhotoUrl());
-                        // responseDto.setXCoordinate();
-                        // responseDto.setYCoordinate();
+
                         // 주소를 이용해 좌표 가져오기
-                        try {
-                            KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
-                            responseDto.setXCoordinate(Double.toString(coordinate.getX())); // double을 String으로 변환
-                            responseDto.setYCoordinate(Double.toString(coordinate.getY())); // double을 String으로 변환
-                        } catch (Exception e) {
-                            log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
-                            responseDto.setXCoordinate(null); // 좌표를 찾지 못한 경우 null 처리
+                        if (textData.getAddress() != null && !textData.getAddress().isEmpty()) {
+                            try {
+                                KakaoCoordinate coordinate = kakaoMapService.getCoordinateFromAddress(textData.getAddress());
+                                responseDto.setXCoordinate(Double.toString(coordinate.getX())); // double을 String으로 변환
+                                responseDto.setYCoordinate(Double.toString(coordinate.getY())); // double을 String으로 변환
+                            } catch (Exception e) {
+                                log.error("Failed to get coordinates for address: " + textData.getAddress(), e);
+                                responseDto.setXCoordinate(null); // 좌표를 찾지 못한 경우 null 처리
+                                responseDto.setYCoordinate(null);
+                            }
+                        } else {
+                            // 주소가 null인 경우 좌표도 null로 설정
+                            responseDto.setXCoordinate(null);
                             responseDto.setYCoordinate(null);
                         }
                         return responseDto;
