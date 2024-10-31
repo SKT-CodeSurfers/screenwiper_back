@@ -87,8 +87,8 @@ public class TextDataController {
             photo.put("operatingHours", textData.getOperatingHours());
             photo.put("list", textData.getList().stream().map(event -> {
                 Map<String, String> eventMap = new HashMap<>();
-                eventMap.put("name", event);
-                eventMap.put("date", "");  // 실제 이벤트 날짜로 채워야 합니다
+                eventMap.put("name", event.getName() != null ? event.getName().toString() : "");
+                eventMap.put("date", event.getDate() != null ? event.getDate().toString() : "");
                 return eventMap;
             }).collect(Collectors.toList()));
             photo.put("summary", textData.getSummary());
@@ -129,8 +129,8 @@ public class TextDataController {
         photo.put("operatingHours", textData.getOperatingHours());
         photo.put("list", textData.getList().stream().map(event -> {
             Map<String, String> eventMap = new HashMap<>();
-            eventMap.put("name", event);
-            eventMap.put("date", "");  // 실제 이벤트 날짜로 채워야 합니다
+            eventMap.put("name", event.getName() != null ? event.getName().toString() : "");
+            eventMap.put("date", event.getDate() != null ? event.getDate().toString() : "");
             return eventMap;
         }).collect(Collectors.toList()));
         photo.put("summary", textData.getSummary());
