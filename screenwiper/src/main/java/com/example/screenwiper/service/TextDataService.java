@@ -28,6 +28,10 @@ public class TextDataService {
         }
     }
 
+    public Page<TextData> searchTextDataByKeyword(Long memberId, String keyword, Pageable pageable) {
+        return textDataRepository.findByMemberIdAndKeyword(memberId, keyword, pageable);
+    }
+
     public TextData getTextDataById(Long id) {
         Optional<TextData> textDataOptional = textDataRepository.findById(id);
         return textDataOptional.orElse(null); // 데이터가 없으면 null 반환
