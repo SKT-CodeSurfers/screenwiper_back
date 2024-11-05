@@ -14,9 +14,9 @@ public interface TextDataRepository extends JpaRepository<TextData, Long> {
     Page<TextData> findByMemberId(Long memberId, Pageable pageable);
 
     Page<TextData> findByMemberIdAndCategoryName(Long memberId, String categoryName, Pageable pageable);
-
+    /*
     @Query("SELECT t FROM TextData t LEFT JOIN t.list e " +
             "WHERE t.member.id = :memberId AND (t.title LIKE %:keyword% " +
             "OR t.summary LIKE %:keyword% OR e.name LIKE %:keyword%)")
-    Page<TextData> findByMemberIdAndKeyword(Long memberId, String keyword, Pageable pageable);
+    Page<TextData> findByMemberIdAndKeyword(Long memberId, String keyword, Pageable pageable);*/
 }

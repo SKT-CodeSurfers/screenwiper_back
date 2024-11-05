@@ -108,6 +108,7 @@ public class TextDataController {
         return ResponseEntity.ok(response);
     }
 
+    /*
     // 키워드 검색 API
     @GetMapping("/api/photos/search")
     public ResponseEntity<Map<String, Object>> searchTextData(
@@ -173,7 +174,7 @@ public class TextDataController {
 
         response.put("data", data);
         return ResponseEntity.ok(response);
-    }
+    }*/
 
     @GetMapping("/api/photos/{photoId}")
     public ResponseEntity<Map<String, Object>> getTextDataById(@PathVariable Long photoId) {
