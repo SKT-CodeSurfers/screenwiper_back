@@ -108,6 +108,73 @@ public class TextDataController {
         return ResponseEntity.ok(response);
     }
 
+    // 키워드 검색 API
+    @GetMapping("/api/photos/search")
+    public ResponseEntity<Map<String, Object>> searchTextData(
+            HttpServletRequest request,
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = authorizationHeader != null && authorizationHeader.startsWith("Bearer ") ?
+                authorizationHeader.substring(7) : null;
+
+        if (token == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", "False",
+                    "message", "Authorization token is missing"
+            ));
+        }
+
+        Long memberId;
+        try {
+            memberId = jwtUtil.extractMemberId(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", "False",
+                    "message", "Invalid token"
+            ));
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TextData> textDataPage = textDataService.searchTextDataByKeyword(memberId, keyword, pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", "True");
+        response.put("message", "Search Results");
+
+        List<Map<String, Object>> photos = textDataPage.getContent().stream().map(textData -> {
+            Map<String, Object> photo = new HashMap<>();
+            photo.put("photoId", textData.getPhotoId());
+            photo.put("memberId", textData.getMember() != null ? textData.getMember().getId() : null);
+            photo.put("categoryId", textData.getCategory() != null ? textData.getCategory().getId() : null);
+            photo.put("categoryName", textData.getCategoryName());
+            photo.put("title", textData.getTitle());
+            photo.put("address", textData.getAddress());
+            photo.put("operatingHours", textData.getOperatingHours());
+            photo.put("list", textData.getList().stream().map(event -> {
+                Map<String, String> eventMap = new HashMap<>();
+                eventMap.put("name", event.getName() != null ? event.getName().toString() : "");
+                eventMap.put("date", event.getDate() != null ? event.getDate().toString() : "");
+                return eventMap;
+            }).collect(Collectors.toList()));
+            photo.put("summary", textData.getSummary());
+            photo.put("photoName", textData.getPhotoName());
+            photo.put("photoUrl", textData.getPhotoUrl());
+            photo.put("date", textData.getDate());
+            return photo;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("photos", photos);
+        data.put("totalPages", textDataPage.getTotalPages());
+        data.put("totalElements", textDataPage.getTotalElements());
+
+        response.put("data", data);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/api/photos/{photoId}")
     public ResponseEntity<Map<String, Object>> getTextDataById(@PathVariable Long photoId) {
         TextData textData = textDataService.getTextDataById(photoId);
