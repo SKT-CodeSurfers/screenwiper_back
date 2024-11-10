@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,21 +23,22 @@ public class RcmdService {
         List<TextData> randomData = rcmdRepository.findRandomDataByCategory();
 
         // 결과를 맵으로 변환
-        Map<Long, Map<String, Object>> resultMap = new HashMap<>(); // category_id를 키로 사용하는 맵
+        Map<Long, List<Map<String, Object>>> resultMap = new HashMap<>(); // category_id를 키로 사용하는 맵, 각 카테고리마다 여러 데이터를 리스트로 처리
 
         for (TextData data : randomData) {
             // 카테고리 ID를 키로 하여 데이터를 맵에 추가
             Long categoryId = data.getCategoryId();
             if (categoryId != null) {
-                // category_id로 중복 체크
-                resultMap.putIfAbsent(categoryId, convertToMap(data));
+                // category_id가 이미 있으면 리스트에 추가, 없으면 새로 리스트를 만들고 추가
+                resultMap.computeIfAbsent(categoryId, k -> new ArrayList<>()).add(convertToMap(data));
             }
         }
 
         // 최종 결과를 반환할 맵
         Map<String, Object> finalResult = new HashMap<>();
-        resultMap.forEach((categoryId, dataMap) -> {
-            finalResult.put(dataMap.get("category_name").toString(), dataMap); // category_name을 키로 하여 최종 결과에 추가
+        resultMap.forEach((categoryId, dataMapList) -> {
+            // category_name을 키로 하여 최종 결과에 추가
+            finalResult.put(dataMapList.get(0).get("category_name").toString(), dataMapList);
         });
 
         return finalResult;
@@ -54,7 +56,7 @@ public class RcmdService {
         map.put("photo_url", data.getPhotoUrl());
         map.put("summary", data.getSummary());
         map.put("title", data.getTitle());
-        // 필요한 다른 필드들도 추가
+
         return map;
     }
 }
