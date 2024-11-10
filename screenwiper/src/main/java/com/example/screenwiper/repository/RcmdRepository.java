@@ -13,13 +13,15 @@ public interface RcmdRepository extends JpaRepository<TextData, Long> {
     @Query(value = "SELECT t.* " +
             "FROM textdata t " +
             "JOIN ( " +
-            "    SELECT category_id, MIN(photo_id) AS photo_id " +
-            "    FROM ( " +
-            "        SELECT category_id, photo_id " +
+            "    SELECT category_id, (" +
+            "        SELECT photo_id " +
             "        FROM textdata " +
-            "        WHERE category_id IN (1, 2, 3) " +
+            "        WHERE category_id = td.category_id " +
             "        ORDER BY RAND() " +
-            "    ) AS random_photos " +
+            "        LIMIT 1 " +
+            "    ) AS photo_id " +
+            "    FROM textdata td " +
+            "    WHERE category_id IN (1, 2, 3) " +
             "    GROUP BY category_id " +
             ") AS selected_photos " +
             "ON t.photo_id = selected_photos.photo_id",
