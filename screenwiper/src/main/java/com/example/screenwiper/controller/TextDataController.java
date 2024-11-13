@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest; // Jakarta 네임스페이스 사용
 // import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,24 @@ public class TextDataController {
 
     @Autowired
     private KakaoMapService kakaoMapService;
+
+    // 특정 TextData에 대한 유사한 이미지들을 가져오는 엔드포인트
+    @GetMapping("/{id}/similar-images")
+    public ResponseEntity<Map<String, Object>> getSimilarImagesForTextData(@PathVariable("id") Long textDataId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<String> similarImages = textDataService.getSimilarImagesForTextData(textDataId);
+            response.put("success", "True");
+            response.put("similarImages", similarImages);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            log.error("Error retrieving similar images for TextData ID: " + textDataId, e);
+            response.put("success", "False");
+            response.put("message", "Error retrieving similar images");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 
     @GetMapping("/api/photos/list")
     public ResponseEntity<Map<String, Object>> getTextDataList(
