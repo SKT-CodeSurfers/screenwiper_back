@@ -44,11 +44,7 @@ public class ImageSearchController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-<<<<<<< HEAD
-            // 2. 이미지를 서버로 다운로드
-=======
             // 2. 이미지를 서버로 다운로드 (CORS 문제 회피)
->>>>>>> additionalSearch
             URL url = new URL(photoUrl);
             InputStream in = url.openStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -62,14 +58,11 @@ public class ImageSearchController {
             // 3. 이미지를 Base64로 인코딩
             String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
 
-            // 4. Vision API 호출
+            // 4. Vision API 호출 (WebDetection 사용)
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-<<<<<<< HEAD
-=======
             // JSON 바디 작성
->>>>>>> additionalSearch
             String body = "{"
                     + "\"requests\": [{"
                     + "\"image\": {\"content\": \"" + encodedImage + "\"},"
@@ -89,36 +82,6 @@ public class ImageSearchController {
             JsonNode jsonNode = objectMapper.readTree(visionApiResponse);
             JsonNode webDetectionNode = jsonNode.get("responses").get(0).get("webDetection");
 
-<<<<<<< HEAD
-            List<Map<String, String>> similarImages = new ArrayList<>();
-            List<Map<String, String>> recommendImages = new ArrayList<>();
-
-            // 5. visuallySimilarImages 추가
-            JsonNode visuallySimilarImages = webDetectionNode.get("visuallySimilarImages");
-            if (visuallySimilarImages != null) {
-                for (JsonNode image : visuallySimilarImages) {
-                    Map<String, String> img = new HashMap<>();
-                    img.put("imageUrl", image.get("url").asText());
-                    similarImages.add(img);
-                }
-            }
-
-            // 6. pagesWithMatchingImages 추가
-            JsonNode pagesWithMatchingImages = webDetectionNode.get("pagesWithMatchingImages");
-            if (pagesWithMatchingImages != null) {
-                for (JsonNode page : pagesWithMatchingImages) {
-                    String pageTitle = page.has("pageTitle") ? page.get("pageTitle").asText() : "Matching Page";
-                    for (JsonNode image : page.get("partialMatchingImages")) {
-                        Map<String, String> img = new HashMap<>();
-                        img.put("imageUrl", image.get("url").asText());
-                        img.put("title", pageTitle);
-                        recommendImages.add(img);
-                    }
-                }
-            }
-
-            if (similarImages.isEmpty()) {
-=======
             // 7. 웹 페이지 정보 추출 (pagesWithMatchingImages)
             JsonNode pagesWithMatchingImages = webDetectionNode.get("pagesWithMatchingImages");
             List<Map<String, String>> pagesList = new ArrayList<>();
@@ -146,23 +109,16 @@ public class ImageSearchController {
 
             // 9. 결과 반환
             if (pagesList.isEmpty() && similarImagesList.isEmpty()) {
->>>>>>> additionalSearch
                 response.put("success", "False");
                 response.put("message", "No matching data found.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
             response.put("success", "True");
-<<<<<<< HEAD
-            response.put("message", "Similar images retrieved successfully");
-            response.put("images", similarImages);
-            response.put("recommendImages", recommendImages);
-=======
             response.put("message", "Matching data retrieved successfully.");
             response.put("pagesWithMatchingImages", pagesList);
             response.put("visuallySimilarImages", similarImagesList);
 
->>>>>>> additionalSearch
             return ResponseEntity.ok(response);
 
         } catch (IOException e) {
