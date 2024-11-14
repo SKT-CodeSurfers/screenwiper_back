@@ -87,10 +87,16 @@ public class ImageSearchController {
             List<Map<String, String>> pagesList = new ArrayList<>();
             if (pagesWithMatchingImages != null) {
                 for (JsonNode page : pagesWithMatchingImages) {
-                    Map<String, String> pageInfo = new HashMap<>();
-                    pageInfo.put("url", page.has("url") ? page.get("url").asText() : null);
-                    pageInfo.put("title", page.has("pageTitle") ? page.get("pageTitle").asText() : null);
-                    pagesList.add(pageInfo);
+                    String pageUrl = page.get("url").asText();
+                    String pageTitle = page.has("pageTitle") ? page.get("pageTitle").asText() : "Matching Page";
+
+                    for (JsonNode image : page.get("partialMatchingImages")) {
+                        Map<String, String> imageInfo = new HashMap<>();
+                        imageInfo.put("imageUrl", image.get("url").asText()); // 이미지 URL
+                        imageInfo.put("title", pageTitle);
+                        imageInfo.put("url", pageUrl);
+                        pagesList.add(imageInfo);
+                    }
                 }
             }
 
@@ -100,7 +106,7 @@ public class ImageSearchController {
             if (visuallySimilarImages != null) {
                 for (JsonNode image : visuallySimilarImages) {
                     Map<String, String> imageInfo = new HashMap<>();
-                    imageInfo.put("url", image.has("url") ? image.get("url").asText() : null);
+                    imageInfo.put("imageUrl", image.has("url") ? image.get("url").asText() : null);
                     // visuallySimilarImages에서는 title 제공 안 될 가능성이 높음
                     imageInfo.put("title", image.has("title") ? image.get("title").asText() : null);
                     similarImagesList.add(imageInfo);
